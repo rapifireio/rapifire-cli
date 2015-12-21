@@ -1,0 +1,23 @@
+{
+  "name": "rapifire-cli",
+  "version": "0.1.0",
+  "description": "[RAPIFIRE](http://rapifire.com) Command Line Client",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rapifireio/rapifire-cli.git"
+  },
+  "author": "RAPIFIRE Team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rapifireio/rapifire-cli/issues"
+  },
+  "homepage": "https://github.com/rapifireio/rapifire-cli#readme",
+  "dependencies": {
+    "commander": "^2.9.0",
+    "restler": "^3.4.0"
+  }
+}

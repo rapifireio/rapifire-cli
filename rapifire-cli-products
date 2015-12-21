@@ -1,0 +1,21 @@
+#!/usr/bin/env node
+// -*- mode: javascript; -*-
+
+"use strict";
+
+var program = require('commander');
+var rest = require('restler');
+
+var base = "http://api.rapifire.com/api/v1/products/";
+
+program
+  .command("create <name>")
+  .description("Create new product")
+  .action(function(name, opts) {
+    console.log("Creating new product named:", name);
+  });
+
+program.parse(process.argv);
+if (!program.args.length) {
+  program.help();
+}

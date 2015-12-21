@@ -1,0 +1,71 @@
+#!/usr/bin/env node
+// -*- mode: javascript; -*-
+
+"use strict";
+
+var program = require('commander');
+var rest = require('restler');
+
+var fs = require("fs");
+var path = require("path");
+
+
+function getProfileFilename() {
+  return (process.env.HOME || process.env.USERPROFILE) + path.sep + ".rapifire-cli";
+}
+
+function readConfig() {
+  var buf = fs.readFileSync(getProfileFilename());
+  return JSON.parse(buf);
+}
+
+function writeConfig(obj) {
+  fs.writeFileSync(getProfileFilename(), JSON.stringify(obj));
+}
+
+var failureHandler = function(data, response) {
+  console.log("REST call failed. Status code:", response.statusCode, "Body:", data);
+};
+
+program
+  .command("register <email> <password>")
+  .description("Initialize RAPIFIRE Developer Account")
+  .action(function(email, password, opts) {
+    //POST /api/web/v1/developers username password
+    console.log("Registering", email);
+    rest.postJson('http://rapifire.com/api/web/v1/developers',
+                  {username: email, password: password})
+      .on('success', function(data, response) {
+          writeConfig({username: email, password: password, activated: false});
+          console.log("Account created. Email and password stored in " + getProfileFilename() + ". Please check your email and activate your account.");
+      }).on('fail', failureHandler);
+  });
+
+program
+  .command("activate <activationCode>")
+  .description("Activate your RAPIFIRE Developer Account")
+  .action(function(activationCode, opts) {
+    console.log("Activating", activationCode);
+
+    rest.get('http://rapifire.com/api/web/v1/developers?token=' + activationCode)
+      .on('success', function(data , response) {
+        var config = readConfig();
+        config.activated = true;
+        writeConfig(config);
+        console.log("Account activated. Configuration updated.");
+      }).on('fail', failureHandler);
+  });
+
+program
+  .command("products", "Products management commands")
+  .command("things", "Things management commands")
+  .command("users", "Users management commands")
+  .command("code", "Cloud Code management")
+  .command("console","Things real-time data console")
+;
+
+program.parse(process.argv);
+
+if (!program.args.length) {
+  program.help();
+}
