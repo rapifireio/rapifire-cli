@@ -31,7 +31,7 @@ program
     .command("signin <email> <password>")
     .description("Sign in to your existing RAPIFIRE Developer Account")
     .action(function(email, password, opts) {
-        // POST /a/things username password
+        // POST /api/web/v1/myself username password
         console.log("Signing in", email);
         rest.get('http://rapifire.com/api/web/v1/myself', {username: email, password: password})
             .on('success', function(data, response) {
