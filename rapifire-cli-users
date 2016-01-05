@@ -1,0 +1,44 @@
+#!/usr/bin/env node
+// -*- mode: javascript; -*-
+
+"use strict";
+
+var program = require('commander');
+var rest = require('restler');
+var tools = require('./tools.js');
+
+var base = "http://api.rapifire.com/api/v1/users/";
+
+program
+	.command("list")
+	.description("List all users")
+	.action(function(name, opts) {
+		console.log("Users:");
+		var config = tools.readConfig();
+
+		rest.get(base, {username: config.username, password: config.password})
+      .on('success', function(data , response) {
+      	for(var key in data){
+			console.log(JSON.stringify(data[key]));
+      	}
+      }).on('fail', tools.failureHandler);
+	});	
+
+program
+  .command("create <login> <password> <name> [description]")
+  .description("Create new user")
+  .action(function(login, password, name, description, opts) {
+    console.log("Creating new user: " + login);
+    var config = tools.readConfig();
+    var description = description ? description : 'This user is created by rapifire-cli';
+
+    rest.postJson(base, {login: login, password: password, name: name, description: description}, {username: config.username, password: config.password})
+    	.on('success', function(data, response) {
+    		console.log("New user created successfully: " + JSON.stringify(data));
+      }).on('fail', tools.failureHandler);
+  });		
+
+program.parse(process.argv);
+if (!program.args.length) {
+  program.help();
+}

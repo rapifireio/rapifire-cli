@@ -10,21 +10,6 @@ var tools = require('./tools.js');
 var base = "http://api.rapifire.com/api/v1/products/";
 
 program
-  .command("create <name> [heartbeat]")
-  .description("Create new product")
-  .action(function(name, heartbeat, opts) {
-    console.log("Creating new product named:", name);
-    var config = tools.readConfig();
-    // default value for heartbeat is 60 sec
-    var heartbeat = heartbeat ? heartbeat : 60;
-
-    rest.postJson(base, {name: name, heartbeat: heartbeat}, {username: config.username, password: config.password})
-    	.on('success', function(data, response) {
-    			console.log("New product created: " + JSON.stringify(data));
-      }).on('fail', tools.failureHandler);
-  });
-
-program
 	.command("list")
 	.description("List all products")
 	.action(function(name, opts) {
@@ -38,6 +23,21 @@ program
       	}
       }).on('fail', tools.failureHandler);
 	});	
+
+program
+  .command("create <name> [heartbeat]")
+  .description("Create new product")
+  .action(function(name, heartbeat, opts) {
+    console.log("Creating new product named:", name);
+    var config = tools.readConfig();
+    // default value for heartbeat is 60 sec
+    var heartbeat = heartbeat ? heartbeat : 60;
+
+    rest.postJson(base, {name: name, heartbeat: heartbeat}, {username: config.username, password: config.password})
+    	.on('success', function(data, response) {
+    			console.log("New product created: " + JSON.stringify(data));
+      }).on('fail', tools.failureHandler);
+  });	
 
 program.parse(process.argv);
 if (!program.args.length) {
