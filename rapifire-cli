@@ -5,27 +5,7 @@
 
 var program = require('commander');
 var rest = require('restler');
-
-var fs = require("fs");
-var path = require("path");
-
-
-function getProfileFilename() {
-  return (process.env.HOME || process.env.USERPROFILE) + path.sep + ".rapifire-cli";
-}
-
-function readConfig() {
-  var buf = fs.readFileSync(getProfileFilename());
-  return JSON.parse(buf);
-}
-
-function writeConfig(obj) {
-  fs.writeFileSync(getProfileFilename(), JSON.stringify(obj));
-}
-
-var failureHandler = function(data, response) {
-  console.log("REST call failed. Status code:", response.statusCode, "Body:", data);
-};
+var tools = require('./tools.js');
 
 program
     .command("signin <email> <password>")
@@ -35,10 +15,10 @@ program
         console.log("Signing in", email);
         rest.get('http://rapifire.com/api/web/v1/myself', {username: email, password: password})
             .on('success', function(data, response) {
-                writeConfig({username: email, password: password});
-                console.log("Signed in. Email and password is stored in " + getProfileFilename() + ".");
+                tools.writeConfig({username: email, password: password});
+                console.log("Signed in. Email and password is stored in " + tools.getProfileFilename() + ".");
             })
-            .on('fail', failureHandler);
+            .on('fail', tools.failureHandler);
     });
 
 program
@@ -50,9 +30,9 @@ program
     rest.postJson('http://rapifire.com/api/web/v1/developers',
                   {username: email, password: password})
       .on('success', function(data, response) {
-          writeConfig({username: email, password: password, activated: false});
-          console.log("Account created. Email and password is stored in " + getProfileFilename() + ". Please check your email and activate your account.");
-      }).on('fail', failureHandler);
+          tools.writeConfig({username: email, password: password, activated: false});
+          console.log("Account created. Email and password is stored in " + tools.getProfileFilename() + ". Please check your email and activate your account.");
+      }).on('fail', tools.failureHandler);
   });
 
 program
@@ -63,11 +43,11 @@ program
 
     rest.get('http://rapifire.com/api/web/v1/developers?token=' + activationCode)
       .on('success', function(data , response) {
-        var config = readConfig();
+        var config = tools.readConfig();
         config.activated = true;
-        writeConfig(config);
+        tools.writeConfig(config);
         console.log("Account activated. Configuration updated.");
-      }).on('fail', failureHandler);
+      }).on('fail', tools.failureHandler);
   });
 
 program
