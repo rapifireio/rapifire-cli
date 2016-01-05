@@ -6,23 +6,25 @@
 var program = require('commander');
 var rest = require('restler');
 var tools = require('./tools.js');
+var config = require('./config');
 
-var base = "http://api.rapifire.com/api/v1/users/";
+
+var base = config.baseApiUrl + "/users/";
 
 program
-	.command("list")
-	.description("List all users")
-	.action(function(name, opts) {
-		console.log("Users:");
-		var config = tools.readConfig();
+  .command("list")
+  .description("List all users")
+  .action(function(name, opts) {
+    console.log("Users:");
+    var config = tools.readConfig();
 
-		rest.get(base, {username: config.username, password: config.password})
+    rest.get(base, {username: config.username, password: config.password})
       .on('success', function(data , response) {
       	for(var key in data){
-			console.log(JSON.stringify(data[key]));
+	  console.log(JSON.stringify(data[key]));
       	}
       }).on('fail', tools.failureHandler);
-	});	
+  });	
 
 program
   .command("create <login> <password> <name> [description]")
@@ -33,8 +35,8 @@ program
     var description = description ? description : 'This user is created by rapifire-cli';
 
     rest.postJson(base, {login: login, password: password, name: name, description: description}, {username: config.username, password: config.password})
-    	.on('success', function(data, response) {
-    		console.log("New user created successfully: " + JSON.stringify(data));
+      .on('success', function(data, response) {
+    	console.log("New user created successfully: " + JSON.stringify(data));
       }).on('fail', tools.failureHandler);
   });		
 

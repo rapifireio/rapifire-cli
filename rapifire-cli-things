@@ -5,8 +5,9 @@
 
 var program = require('commander');
 var rest = require('restler');
+var config = require('./config');
 
-var base = "http://api.rapifire.com/api/v1/things/";
+var base = config.baseApiUrl + "/things/";
 
 program
   .command("create <name> <product>")

@@ -6,23 +6,24 @@
 var program = require('commander');
 var rest = require('restler');
 var tools = require('./tools.js');
+var config = require('./config');
 
-var base = "http://api.rapifire.com/api/v1/products/";
+var base = config.baseApiUrl + "/products/";
 
 program
-	.command("list")
-	.description("List all products")
-	.action(function(opts) {
-		console.log("Products:");
-		var config = tools.readConfig();
+  .command("list")
+  .description("List all products")
+  .action(function(opts) {
+    console.log("Products:");
+    var config = tools.readConfig();
 
-		rest.get(base, {username: config.username, password: config.password})
+    rest.get(base, {username: config.username, password: config.password})
       .on('success', function(data , response) {
       	for(var key in data){
-					console.log(JSON.stringify(data[key]));
+	  console.log(JSON.stringify(data[key]));
       	}
       }).on('fail', tools.failureHandler);
-	});	
+  });	
 
 program
   .command("create <name> [heartbeat]")
@@ -34,32 +35,32 @@ program
     var heartbeat = heartbeat ? heartbeat : 60;
 
     rest.postJson(base, {name: name, heartbeat: heartbeat}, {username: config.username, password: config.password})
-    	.on('success', function(data, response) {
-    			console.log("New product created: " + JSON.stringify(data));
+      .on('success', function(data, response) {
+    	console.log("New product created: " + JSON.stringify(data));
       }).on('fail', tools.failureHandler);
   });	
 
 program
-	.command("meta <productName>")
-	.description("List all metadata for given product")
-	.action(function(productName, opts) {
-		console.log("Getting metadata for: " + productName);
-		var config = tools.readConfig();
+  .command("meta <productName>")
+  .description("List all metadata for given product")
+  .action(function(productName, opts) {
+    console.log("Getting metadata for: " + productName);
+    var config = tools.readConfig();
 
-		rest.get(base + "?name=" + productName, {username: config.username, password: config.password})
-			.on('success', function(data, response) {
-				console.log("Product details " + JSON.stringify(data));
-				var productId = data[0].id;
+    rest.get(base + "?name=" + productName, {username: config.username, password: config.password})
+      .on('success', function(data, response) {
+	console.log("Product details " + JSON.stringify(data));
+	var productId = data[0].id;
 
-				rest.get(base + productId + '/meta', {username: config.username, password: config.password})
-		      .on('success', function(data , response) {
-		      	for(var key in data){
-							console.log(JSON.stringify(data[key]));
-		      	}
-		      }).on('fail', tools.failureHandler);
+	rest.get(base + productId + '/meta', {username: config.username, password: config.password})
+	  .on('success', function(data , response) {
+	    for(var key in data){
+	      console.log(JSON.stringify(data[key]));
+	    }
+	  }).on('fail', tools.failureHandler);
 
-			}).on('fail', tools.failureHandler);
-	});	
+      }).on('fail', tools.failureHandler);
+  });	
 
 
 program.parse(process.argv);
