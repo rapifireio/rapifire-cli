@@ -5,18 +5,33 @@
 
 var program = require('commander');
 var rest = require('restler');
+var tools = require('./tools');
 var config = require('./config');
 
 var base = config.baseApiUrl + "/things/";
+var getProductByNameUrl = config.baseApiUrl + "/products/?name=";
 
 program
   .command("create <name> <product>")
-  .description("Create new thingt")
+  .description("Create new thing")
   .action(function(name, product, opts) {
-    // get product by name
-    // get product id
-    // use it in thing creation
-    console.log("Creating new thing named:", name, "product:", product);
+      console.log("Creating new thing named " + name + " for product " + product);
+      var config = tools.readConfig();
+      rest.get(getProductByNameUrl + product, {username: config.username, password: config.password})
+          .on('complete', function(data, response) {
+              if (data.length != 1) {
+                  process.exit(1);
+              }
+
+              var id = data[0].id;
+
+              rest.postJson(base, {productId: id, name:  name}, {username: config.username, password: config.password})
+                  .on('success', function(data, response) {
+                      console.log("New thing created: " + JSON.stringify(data));
+                  })
+                  .on('fail', tools.failureHandler);
+          })
+          .on('fail', tools.failureHandler);
   });
 
 program.parse(process.argv);
