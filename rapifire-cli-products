@@ -49,18 +49,39 @@ program
 
     rest.get(base + "?name=" + productName, {username: config.username, password: config.password})
       .on('success', function(data, response) {
-	console.log("Product details " + JSON.stringify(data));
-	var productId = data[0].id;
+      	var productId = data[0].id;
 
-	rest.get(base + productId + '/meta', {username: config.username, password: config.password})
-	  .on('success', function(data , response) {
-	    for(var key in data){
-	      console.log(JSON.stringify(data[key]));
-	    }
-	  }).on('fail', tools.failureHandler);
+      	rest.get(base + productId + '/meta', {username: config.username, password: config.password})
+      	  .on('success', function(data , response) {
+      	    for(var key in data){
+      	      console.log(JSON.stringify(data[key]));
+      	    }
+      	  }).on('fail', tools.failureHandler);
 
       }).on('fail', tools.failureHandler);
   });	
+
+program
+  .command("meta-delete <productName> <key>")
+  .description("Delete single product's metadata entry")
+  .action(function(productName, key, opts){
+    console.log("Deleting metadata entry for key: " + key + " for product: " + productName);
+    var config = tools.readConfig();
+
+    rest.get(base + "?name=" + productName, {username: config.username, password: config.password})
+      .on('success', function(data, response) {
+        var productId = data[0].id;
+
+        rest.del(base + productId + '/meta/' + key, {username: config.username, password: config.password})
+          .on('success', function(data, response){
+
+            console.log('Key ' + key + ' deleted successfully for product ' + productName + '.');
+
+          }).on('fail', tools.failureHandler);
+
+      }).on('fail', tools.failureHandler);      
+
+  });
 
 
 program.parse(process.argv);
