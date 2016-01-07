@@ -1,0 +1,63 @@
+#!/usr/bin/env node
+// -*- mode: javascript; -*-
+
+"use strict";
+
+var program = require('commander');
+var WebSocket = require('ws');
+
+function doSubscribe(authId, authKey, channel) {
+    var init = {
+      "operation": "init",
+      "data": {
+          "authId": authId,
+          "authKey": authKey,
+      }
+    };
+
+    var packet = {
+        "operation": "subscribe",
+        "data": {
+            "channel": channel
+        }
+    };
+
+    var url = 'ws://rapifire.com/pubsub';
+
+    ws = new WebSocket(url);
+
+    console.log(ws);
+    ws.on('message', function(data) {
+      console.log("<- " + data);
+    });
+
+    ws.on('close', function close() {
+      process.exit(0);
+      ws = null;
+    });
+
+    ws.on('open', function() {
+        console.log("-> " + JSON.stringify(init));
+        ws.send(JSON.stringify(init));
+
+        console.log("-> " + JSON.stringify(packet));
+        ws.send(JSON.stringify(packet));
+    });
+
+
+}
+
+program
+    .command("as <name>")
+    .description("Subscribe as a Thing to it's command channel")
+    .action(function(name, opts) {
+        console.log("Subscribing as " + name + " to it's command channel.");
+        // TODO: get things details
+        doSubscribe(thing.thingId, thing.thingToken, "/" + thing.thingId + "/commands");
+    });
+
+
+program.parse(process.argv);
+if (!program.args.length) {
+  program.help();
+}

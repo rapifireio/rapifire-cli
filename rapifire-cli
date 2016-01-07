@@ -57,6 +57,7 @@ program
   .command("code", "Cloud Code management")
   .command("console","Things real-time data console")
   .command("publish", "Publish data to the cloud")
+  .command("subscribe", "Subscribe to command channels")
 ;
 
 program.parse(process.argv);
