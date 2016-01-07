@@ -56,6 +56,7 @@ program
   .command("users", "Users management commands")
   .command("code", "Cloud Code management")
   .command("console","Things real-time data console")
+  .command("publish", "Publish data to the cloud")
 ;
 
 program.parse(process.argv);
