@@ -1,0 +1,57 @@
+#!/usr/bin/env node
+// -*- mode: javascript; -*-
+
+"use strict";
+
+var program = require('commander');
+var rest = require('restler');
+var tools = require('./tools');
+var config = require('./config');
+
+var base = config.baseApiUrl + "/channels/";
+var getThingByName = config.baseApiUrl + "/things/?query="
+
+program
+    .command("as <name> <data>")
+    .description("Publish SenML formatted data as a Thing")
+    .action(function(name, data, opts) {
+        console.log("Publishing as a thing named " + name + ": " + data);
+        doPublish(name, data, 'data');
+    });
+
+program
+    .command("to <name> <data>")
+    .description("Publish free form data (command) to a Thing")
+    .action(function(name, data, opts) {
+        console.log("Publishing to a thing named " + name + ": " + data);
+        doPublish(name, data, 'commands');
+    });
+
+function doPublish(name, data, channel) {
+    var config = tools.readConfig();
+    rest.get(getThingByName + name, {username: config.username, password: config.password})
+        .on('complete', function(data, response) {
+            var thing = null;
+            for (var i = 0; i < data.length; i++) {
+                if (data[i].name == name) {
+                    thing = data[i];
+                    break;
+                }
+            }
+            if (thing == null) {
+                console.log("Thing not found");
+                process.exit(1);
+            }
+            rest.postJson(base + "/" + thing.thingId + "/" + channel, JSON.stringify(data), {username: thing.thingId, password: thing.thingToken})
+                .on('success', function(data, response) {
+                    console.log("Data successfully published.");
+                })
+                .on('fail', tools.failureHandler);
+        })
+        .on('fail', tools.failureHandler);
+}
+
+program.parse(process.argv);
+if (!program.args.length) {
+  program.help();
+}
