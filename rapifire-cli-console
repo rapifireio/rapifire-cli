@@ -8,9 +8,6 @@ var rest = require('restler');
 var tools = require('./tools');
 var config = require('./config');
 
-var WebSocket = require('ws');
-
-
 var base = config.baseApiUrl;
 var websocketUrl = config.baseWsUrl;
 
@@ -19,48 +16,6 @@ console.log("Running developer console...");
 var config = tools.readConfig();
 rest.get(base + '/myself', {username: config.username, password: config.password})
     .on('success', function(data, response) {
-        console.log(data);
-        console.log(response);
-        console.log();
-        doSubscribe(data.authId, data.authKey, "/provider/" + data.providerCompanyId + "/all-things", websocketUrl);
+        tools.subscribe(data.authId, data.authKey, "/provider/" + data.providerCompanyId + "/all-things", websocketUrl);
     })
     .on('fail', tools.failureHandler);
-
-function doSubscribe(authId, authKey, channel, url) {
-    var init = {
-      "operation": "init",
-      "data": {
-          "authId": authId,
-          "authKey": authKey,
-      }
-    };
-
-    var packet = {
-        "operation": "subscribe",
-        "data": {
-            "channel": channel
-        }
-    };
-
-    var ws = new WebSocket(url);
-
-    console.log(ws);
-    ws.on('message', function(data) {
-      console.log("<- " + data);
-    });
-
-    ws.on('close', function close() {
-      process.exit(0);
-      ws = null;
-    });
-
-    ws.on('open', function() {
-        console.log("-> " + JSON.stringify(init));
-        ws.send(JSON.stringify(init));
-
-        console.log("-> " + JSON.stringify(packet));
-        ws.send(JSON.stringify(packet));
-    });
-
-
-}

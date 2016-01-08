@@ -34,54 +34,11 @@ program
                     console.log("Thing not found");
                     process.exit(1);
                 }
-
-                console.log(thing);
-                doSubscribe(thing.thingId, thing.thingToken, "/" + thing.thingId + "/commands", websocketUrl);
-
+                tools.subscribe(thing.thingId, thing.thingToken, "/" + thing.thingId + "/commands", websocketUrl);
             })
             .on('fail', tools.failureHandler);
 
     });
-
-
-function doSubscribe(authId, authKey, channel, url) {
-    var init = {
-      "operation": "init",
-      "data": {
-          "authId": authId,
-          "authKey": authKey,
-      }
-    };
-
-    var packet = {
-        "operation": "subscribe",
-        "data": {
-            "channel": channel
-        }
-    };
-
-    var ws = new WebSocket(url);
-
-    console.log(ws);
-    ws.on('message', function(data) {
-      console.log("<- " + data);
-    });
-
-    ws.on('close', function close() {
-      process.exit(0);
-      ws = null;
-    });
-
-    ws.on('open', function() {
-        console.log("-> " + JSON.stringify(init));
-        ws.send(JSON.stringify(init));
-
-        console.log("-> " + JSON.stringify(packet));
-        ws.send(JSON.stringify(packet));
-    });
-
-
-}
 
 program.parse(process.argv);
 if (!program.args.length) {
