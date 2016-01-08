@@ -10,7 +10,8 @@ var config = require('./config');
 
 var WebSocket = require('ws');
 
-var getThingByName = config.baseApiUrl + "/things/?query="
+var getThingByName = config.baseApiUrl + "/things/?query=";
+var websocketUrl = config.baseWsUrl;
 
 program
     .command("as <name>")
@@ -35,7 +36,7 @@ program
                 }
 
                 console.log(thing);
-                doSubscribe(thing.thingId, thing.thingToken, "/" + thing.thingId + "/commands");
+                doSubscribe(thing.thingId, thing.thingToken, "/" + thing.thingId + "/commands", websocketUrl);
 
             })
             .on('fail', tools.failureHandler);
@@ -43,7 +44,7 @@ program
     });
 
 
-function doSubscribe(authId, authKey, channel) {
+function doSubscribe(authId, authKey, channel, url) {
     var init = {
       "operation": "init",
       "data": {
@@ -58,8 +59,6 @@ function doSubscribe(authId, authKey, channel) {
             "channel": channel
         }
     };
-
-    var url = 'ws://ws.rapifire.com/pubsub';
 
     var ws = new WebSocket(url);
 
