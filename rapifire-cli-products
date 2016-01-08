@@ -19,9 +19,7 @@ program
 
     rest.get(base, {username: config.username, password: config.password})
       .on('success', function(data , response) {
-      	for(var key in data){
-	  console.log(JSON.stringify(data[key]));
-      	}
+      	tools.printJsonArray(data);
       }).on('fail', tools.failureHandler);
   });	
 
@@ -53,9 +51,7 @@ program
 
       	rest.get(base + productId + '/meta', {username: config.username, password: config.password})
       	  .on('success', function(data , response) {
-      	    for(var key in data){
-      	      console.log(JSON.stringify(data[key]));
-      	    }
+      	    tools.printJsonArray(data);
       	  }).on('fail', tools.failureHandler);
 
       }).on('fail', tools.failureHandler);

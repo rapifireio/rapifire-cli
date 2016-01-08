@@ -14,5 +14,14 @@ module.exports = {
 	},
 	failureHandler : function(data, response) {
 	  console.log("REST call failed. Status code:", response.statusCode, "Body:", data);
+	},
+	printJson : function(json){
+		// last parameter is number of spaces
+		console.log(JSON.stringify(json, null, 4));
+	},
+	printJsonArray : function(jsonArray) {
+		for(var key in jsonArray) {
+			this.printJson(jsonArray[key]);
+		}
 	}
 }

@@ -20,9 +20,7 @@ program
 
     rest.get(base, {username: config.username, password: config.password})
       .on('success', function(data , response) {
-      	for(var key in data){
-	  console.log(JSON.stringify(data[key]));
-      	}
+      	tools.printJsonArray(data);
       }).on('fail', tools.failureHandler);
   });	
 
@@ -38,7 +36,27 @@ program
       .on('success', function(data, response) {
     	console.log("New user created successfully: " + JSON.stringify(data));
       }).on('fail', tools.failureHandler);
-  });		
+  });	
+
+program
+  .command("meta <login>")
+  .description("List all metadata for user")
+  .action(function(login, opts){
+    var config = tools.readConfig();
+
+    rest.get(base + '?username=' + login, {username: config.username, password: config.password})
+      .on('success', function(data, response){
+        if(data.length != 1) return;
+        var userId = data[0].id;
+
+        rest.get(base + userId + '/meta', {username: config.username, password: config.password})
+          .on('success', function(data, response){
+            tools.printJsonArray(data);
+          }).on('fail', tools.failureHandler);
+
+      }).on('fail', tools.failureHandler);
+  });
+
 
 program.parse(process.argv);
 if (!program.args.length) {
