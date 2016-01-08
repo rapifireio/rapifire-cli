@@ -72,6 +72,19 @@ program
   });
 
 program
+  .command("delete <login>")
+  .description("Delete single user.")
+  .action(function(login, opts){
+    doForUserName(login, function(userId){
+      rest.del(base + userId, tools.getAuthObj())
+        .on('success', function(data, response){
+          console.log("User " + login + " deleted.");
+        })
+        .on('fail', tools.failureHandler);
+    });
+  });
+
+program
   .command("meta <login>")
   .description("List all metadata for user")
   .action(function(login, opts){
