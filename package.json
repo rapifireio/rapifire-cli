@@ -18,6 +18,7 @@
   "homepage": "https://github.com/rapifireio/rapifire-cli#readme",
   "dependencies": {
     "commander": "^2.9.0",
-    "restler": "^3.4.0"
+    "restler": "^3.4.0",
+    "ws": "^1.0.1"
   }
 }
