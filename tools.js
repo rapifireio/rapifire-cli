@@ -23,5 +23,9 @@ module.exports = {
 		for(var key in jsonArray) {
 			this.printJson(jsonArray[key]);
 		}
+	},
+	getAuthObj : function() {
+		var config = this.readConfig();
+		return {username: config.username, password: config.password};
 	}
 }
