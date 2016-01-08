@@ -26,7 +26,6 @@ program
   .command("create <name> [heartbeat]")
   .description("Create new product")
   .action(function(name, heartbeat, opts) {
-    console.log("Creating new product named:", name);
     // default value for heartbeat is 60 sec
     var heartbeat = heartbeat ? heartbeat : 60;
 
@@ -66,7 +65,6 @@ program
   .command("meta <productName>")
   .description("List all metadata for given product")
   .action(function(productName, opts) {
-    console.log("Getting metadata for: " + productName);
 
     doForProductName(productName, function(productId){
       rest.get(base + productId + '/meta', tools.getAuthObj())
@@ -99,21 +97,13 @@ program
   .command("meta-delete <productName> <key>")
   .description("Delete single product's metadata entry")
   .action(function(productName, key, opts){
-    console.log("Deleting metadata entry for key: " + key + " for product: " + productName);
 
-    rest.get(base + "?name=" + productName, tools.getAuthObj())
-      .on('success', function(data, response) {
-        var productId = data[0].id;
-
-        rest.del(base + productId + '/meta/' + key, tools.getAuthObj())
+    doForProductName(productName, function(productId){
+      rest.del(base + productId + '/meta/' + key, tools.getAuthObj())
           .on('success', function(data, response){
-
             console.log('Key ' + key + ' deleted successfully for product ' + productName + '.');
-
           }).on('fail', tools.failureHandler);
-
-      }).on('fail', tools.failureHandler);      
-
+    });
   });
 
 
