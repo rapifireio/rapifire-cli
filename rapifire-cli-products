@@ -50,6 +50,19 @@ program
   });
 
 program
+  .command("delete <productName>")
+  .description("Delete single product")
+  .action(function(productName, opts){
+    doForProductName(productName, function(productId){
+      rest.del(base + productId, tools.getAuthObj())
+        .on('success', function(data, response){
+          console.log("Product " + productName + " deleted successfully.");
+        })
+        .on('fail', tools.failureHandler);
+    });
+  });
+
+program
   .command("meta <productName>")
   .description("List all metadata for given product")
   .action(function(productName, opts) {
