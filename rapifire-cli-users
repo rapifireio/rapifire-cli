@@ -115,6 +115,19 @@ program
 
   });
 
+program
+  .command("meta-delete <login> <key>")
+  .description("Delete user metadata entry")
+  .action(function(login, key, opts){
+    doForUserName(login, function(userId){
+      rest.del(base + userId + '/meta/' + key, tools.getAuthObj())
+        .on('success', function(data, response){
+          console.log('Metadata deleted.');
+        }).on('fail', tools.failureHandler);
+    })
+
+  });  
+
 
 function doForUserName(username, callback) {
   rest.get(base + "?username=" + username, tools.getAuthObj())
