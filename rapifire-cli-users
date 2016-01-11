@@ -88,20 +88,33 @@ program
   .command("meta <login>")
   .description("List all metadata for user")
   .action(function(login, opts){
-    var config = tools.readConfig();
+    doForUserName(login, function(userId){
+      rest.get(base + userId + '/meta', tools.getAuthObj())
+        .on('success', function(data, response){
+          tools.printJsonArray(data);
+        }).on('fail', tools.failureHandler);
+    })
 
-    rest.get(base + '?username=' + login, {username: config.username, password: config.password})
-      .on('success', function(data, response){
-        if(data.length != 1) return;
-        var userId = data[0].id;
-
-        rest.get(base + userId + '/meta', {username: config.username, password: config.password})
-          .on('success', function(data, response){
-            tools.printJsonArray(data);
-          }).on('fail', tools.failureHandler);
-
-      }).on('fail', tools.failureHandler);
   });
+
+program
+  .command("meta-add <login> <key> <value>")
+  .description("Create or update user metadata entry")
+  .action(function(login, key, value, opts){
+    var metadataJson = {
+        "key"   : key,
+        "value" : value
+      };
+
+    doForUserName(login, function(userId){
+      rest.putJson(base + userId + '/meta', metadataJson, tools.getAuthObj())
+        .on('success', function(data, response){
+          console.log('Metadata added.');
+        }).on('fail', tools.failureHandler);
+    })
+
+  });
+
 
 function doForUserName(username, callback) {
   rest.get(base + "?username=" + username, tools.getAuthObj())
