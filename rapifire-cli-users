@@ -98,6 +98,19 @@ program
   });
 
 program
+  .command("meta-show <login> <key>")
+  .description("Show single metadata entry")
+  .action(function(login, key, opts){
+    doForUserName(login, function(userId){
+      rest.get(base + userId + '/meta/' + key, tools.getAuthObj())
+        .on('success', function(data, response){
+          tools.printJson(data);
+        }).on('fail', tools.failureHandler);
+    })
+
+  });
+
+program
   .command("meta-add <login> <key> <value>")
   .description("Create or update user metadata entry")
   .action(function(login, key, value, opts){
