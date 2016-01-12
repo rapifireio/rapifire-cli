@@ -5,7 +5,7 @@
 
 var program = require('commander');
 var rest = require('restler');
-var tools = require('./tools.js');
+var tools = require('./tools');
 var config = require('./config');
 
 var base = config.baseApiUrl + "/products/";
@@ -39,7 +39,7 @@ program
   .command("update <productName> <heartbeat>")
   .description("Update heartbeat for product")
   .action(function(productName, heartbeat, opts){
-    doForProductName(productName, function(productId){
+    tools.doForProductName(productName, function(productId){
       rest.putJson(base + productId, {"heartbeat" : heartbeat}, tools.getAuthObj())
         .on('success', function(data, response){
           console.log("Product " + productName + " updated successfully.");
@@ -52,7 +52,7 @@ program
   .command("delete <productName>")
   .description("Delete single product")
   .action(function(productName, opts){
-    doForProductName(productName, function(productId){
+    tools.doForProductName(productName, function(productId){
       rest.del(base + productId, tools.getAuthObj())
         .on('success', function(data, response){
           console.log("Product " + productName + " deleted successfully.");
@@ -66,7 +66,7 @@ program
   .description("List all metadata for given product")
   .action(function(productName, opts) {
 
-    doForProductName(productName, function(productId){
+    tools.doForProductName(productName, function(productId){
       rest.get(base + productId + '/meta', tools.getAuthObj())
         .on('success', function(data , response) {
           tools.printJsonArray(data);
@@ -84,7 +84,7 @@ program
         "value" : value
       };
 
-    doForProductName(productName, function(productId){
+    tools.doForProductName(productName, function(productId){
       rest.putJson(base + productId + '/meta', metadataJson, tools.getAuthObj())
         .on('success', function(data, response){
           console.log("Metadata added successfully.");
@@ -98,27 +98,13 @@ program
   .description("Delete single product's metadata entry")
   .action(function(productName, key, opts){
 
-    doForProductName(productName, function(productId){
+    tools.doForProductName(productName, function(productId){
       rest.del(base + productId + '/meta/' + key, tools.getAuthObj())
           .on('success', function(data, response){
             console.log('Key ' + key + ' deleted successfully for product ' + productName + '.');
           }).on('fail', tools.failureHandler);
     });
   });
-
-
-function doForProductName(productName, callback) {
-
-  rest.get(base + "?name=" + productName, tools.getAuthObj())
-      .on('success', function(data, response) {
-        if(data.length != 1){
-          process.exit(1);
-        }
-        var productId = data[0].id;
-        callback(productId);
-      }).on('fail', tools.failureHandler);
-}
-
 
 program.parse(process.argv);
 if (!program.args.length) {
