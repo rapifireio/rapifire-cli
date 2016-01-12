@@ -54,7 +54,7 @@ program
   .command("products", "Products management commands")
   .command("things", "Things management commands")
   .command("users", "Users management commands")
-  .command("code", "Cloud Code management")
+  .command("cloud-code", "Cloud Code management")
   .command("console","Things real-time data console")
   .command("publish", "Publish data to the cloud")
   .command("subscribe", "Subscribe to command channels")

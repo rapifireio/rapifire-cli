@@ -1,0 +1,60 @@
+#!/usr/bin/env node
+// -*- mode: javascript; -*-
+
+"use strict";
+
+var program = require('commander');
+var rest = require('restler');
+var tools = require('./tools');
+var config = require('./config');
+
+var base = config.baseApiUrl + "/code/";
+
+program
+    .command("get <productName")
+    .description("Get current Cloud Code snippet for given product")
+    .action(function(productName, opts) {
+        tools.doForProductName(productName, function(productId) {
+            rest.get(base + productId, tools.getAuthObj())
+                .on('success', function(data, response) {
+                    console.log(data);
+                })
+                .on('fail', tools.failureHandler);
+        });
+    });
+
+program
+    .command("update <productName>")
+    .description("Update Cloud Code for a given product")
+    .action(function(productName, opts) {
+
+        process.stdin.setEncoding('utf8');
+
+        var chunks = [];
+        process.stdin.on('data', function(chunk) {
+            chunks.push(chunk);
+        });
+        process.stdin.on('end', function() {
+            var code = chunks.join();
+            if (code === undefined || code.trim().length == 0) {
+                console.log("Empty cloud code snippet.")
+                process.exit(1);
+            }
+
+            tools.doForProductName(productName, function(productId) {
+                console.log("Uploading code snippet for " + productName);
+                rest.postJson(base, {code: code}, tools.getAuthObj())
+                    .on('success', function(data, response) {
+                        console.log("Uploaded successfully.");
+                    })
+                    .on('fail', tools.failureHandler);
+
+            });
+        });
+    });
+
+program.parse(process.argv);
+
+if (!program.args.length) {
+  program.help();
+}
