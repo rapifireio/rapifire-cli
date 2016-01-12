@@ -24,9 +24,14 @@ program
     });
 
 program
-    .command("update <productName>")
+    .command("update <codeType> <productName>")
     .description("Update Cloud Code for a given product")
-    .action(function(productName, opts) {
+    .action(function(codeType, productName, opts) {
+
+        if (codeType != 'process' && codeType != 'job') {
+            console.log("Invalid code type. Allowed values are 'process' and 'job'");
+            process.exit(1);
+        }
 
         process.stdin.setEncoding('utf8');
 
@@ -43,7 +48,7 @@ program
 
             tools.doForProductName(productName, function(productId) {
                 console.log("Uploading code snippet for " + productName);
-                rest.postJson(base + productId, {code: code}, tools.getAuthObj())
+                rest.postJson(base + productId, {code: code, codeType: codeType}, tools.getAuthObj())
                     .on('success', function(data, response) {
                         console.log("Uploaded successfully.");
                     })
