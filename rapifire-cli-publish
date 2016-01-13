@@ -27,7 +27,7 @@ program
         doPublish(name, data, 'commands');
     });
 
-function doPublish(name, data, channel) {
+function doPublish(name, dataToPublish, channel) {
     var config = tools.readConfig();
     rest.get(getThingByName + name, tools.getAuthObj())
         .on('complete', function(data, response) {
@@ -44,7 +44,7 @@ function doPublish(name, data, channel) {
             }
 
             var publish = function(authId, authToken) {
-                rest.postJson(base + "/" + thing.thingId + "/" + channel, JSON.stringify(data), {username: authId, password: authToken})
+                rest.postJson(base + "/" + thing.thingId + "/" + channel, JSON.parse(dataToPublish), {username: authId, password: authToken})
                     .on('success', function(data, response) {
                         console.log("Data successfully published.");
                     })
