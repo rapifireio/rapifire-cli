@@ -39,12 +39,24 @@ function doPublish(name, dataToPublish, channel) {
                 }
             }
             if (thing == null) {
-                console.log("Thing not found");
+                console.log("Thing not found.");
                 process.exit(1);
             }
 
+            var toPublish = null;
+            if (channel === 'commands') {
+                toPublish = dataToPublish;
+            } else {
+                try {
+                    toPublish = JSON.parse(dataToPublish);
+                } catch (e) {
+                    console.log("Invalid JSON SenML");
+                    process.exit(1);
+                }
+            }
+
             var publish = function(authId, authToken) {
-                rest.postJson(base + "/" + thing.thingId + "/" + channel, JSON.parse(dataToPublish), {username: authId, password: authToken})
+                rest.postJson(base + "/" + thing.thingId + "/" + channel, toPublish, {username: authId, password: authToken})
                     .on('success', function(data, response) {
                         console.log("Data successfully published.");
                     })

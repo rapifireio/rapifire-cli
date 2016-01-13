@@ -31,7 +31,7 @@ program
                     }
                 }
                 if (thing == null) {
-                    console.log("Thing not found");
+                    console.log("Thing not found.");
                     process.exit(1);
                 }
                 tools.subscribe(thing.thingId, thing.thingToken, "/" + thing.thingId + "/commands", websocketUrl);
