@@ -61,19 +61,19 @@ program
   });
 
 program
-  .command("assign <thingName> <username>")
-  .description("Assign thing to user")
-  .action(function(thingName, username, opts){
-    tools.doForThingName(thingName, function(thingId){
-      tools.doForUserName(username, function(userId){
-        rest.postJson(base + thingId + '/assign/' + userId, {}, tools.getAuthObj())
-          .on('success', function(data, response){
-            console.log("Thing successfully assigned.")
-          })  
-          .on('fail', tools.failureHandler);
-      });
+    .command("assign <thingName> <username>")
+    .description("Assign thing to user")
+    .action(function(thingName, username, opts){
+        tools.doForThingName(thingName, function(thingId){
+            tools.doForUserName(username, function(userId){
+                rest.postJson(base + thingId + '/assign/' + userId, {}, tools.getAuthObj())
+                    .on('success', function(data, response){
+                        console.log("Thing successfully assigned.")
+                    })
+                    .on('fail', tools.failureHandler);
+            });
+        });
     });
-  });
 
 program
   .command("delete <thingName>")
@@ -91,7 +91,7 @@ program
 program
   .command("show <thingName>")
   .description("Show thing.")
-  .action(function(thingName, opts){ 
+  .action(function(thingName, opts){
     tools.doForThingName(thingName, function(thingId){
       rest.get(base + thingId, tools.getAuthObj())
         .on('success', function(data, response){
