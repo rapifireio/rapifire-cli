@@ -88,6 +88,19 @@ program
     })
   });
 
+program
+  .command("show <thingName>")
+  .description("Show thing.")
+  .action(function(thingName, opts){ 
+    tools.doForThingName(thingName, function(thingId){
+      rest.get(base + thingId, tools.getAuthObj())
+        .on('success', function(data, response){
+          tools.printJson(data);
+        })
+        .on('fail', tools.failureHandler);
+    });
+  });
+
 program.parse(process.argv);
 if (!program.args.length) {
   program.help();
