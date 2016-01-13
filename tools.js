@@ -90,19 +90,15 @@ module.exports = {
 	      callback(userId);
 	    }).on('fail', this.failureHandler);
 	},
-	doForThingName: function(thingName, productName, callback) {
-	  var auth = this.getAuthObj();
-	  var failureHandler = this.failureHandler
-	  this.doForProductName(productName, function(productId) {
-	    rest.get(getThingByNameUrl + "?productId=" + productId + "&thingName=" + thingName, auth)
-	      .on('success', function(data, response){
-	        if(data.length != 1){
-	          process.exit(1);
-	        }
-	        var thingId = data[0].thingId;
-	        callback(thingId, productId);
-	      })
-	      .on('fail', failureHandler);
-	  });
+	doForThingName: function(thingName, callback) {
+		rest.get(getThingByNameUrl + "?thingName=" + thingName, this.getAuthObj())
+			.on('success', function(data, response){
+				if(data.length != 1){
+					process.exit(1);
+				}
+				var thingId = data[0].thingId;
+	      callback(thingId);
+			})
+			.on('fail', this.failureHandler);
 	}
 }

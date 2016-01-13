@@ -29,10 +29,10 @@ program
 
 
 program
-  .command("update <name> <product> <newName> <newProductName> [userName]")
+  .command("update <name> <newName> <newProductName> [userName]")
   .description("Update thing entry")
-  .action(function(name, product, newName, newProductName, userName, opts){
-    tools.doForThingName(name, product, function(thingId, oldProductId){
+  .action(function(name, newName, newProductName, userName, opts){
+    tools.doForThingName(name, function(thingId){
       tools.doForProductName(newProductName, function(productId){
         var updateJson = {
           name : newName,
@@ -55,6 +55,21 @@ program
         } else {
           updateThing(updateJson);
         }
+      });
+    });
+  });
+
+program
+  .command("assign <thingName> <userLogin>")
+  .description("Assign thing to user")
+  .action(function(thingName, userLogin, opts){
+    tools.doForThingName(thingName, function(thingId){
+      tools.doForUserName(userLogin, function(userId){
+        rest.postJson(base + thingId + '/assign/' + userId, {}, tools.getAuthObj())
+          .on('success', function(data, response){
+            console.log("Thing successfully assigned.")
+          })  
+          .on('fail', tools.failureHandler);
       });
     });
   });
