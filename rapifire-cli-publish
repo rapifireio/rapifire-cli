@@ -9,7 +9,7 @@ var tools = require('./tools');
 var config = require('./config');
 
 var base = config.baseApiUrl + "/channels/";
-var getThingByName = config.baseApiUrl + "/things/?query="
+var getThingByName = config.baseApiUrl + "/things/?thingName="
 
 program
     .command("as <name> <data>")
