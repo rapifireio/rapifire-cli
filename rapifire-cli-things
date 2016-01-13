@@ -21,7 +21,8 @@ program
       tools.doForProductName(product, function(productId){
           rest.postJson(base, {productId: productId, name:  name}, tools.getAuthObj())
               .on('success', function(data, response) {
-                  console.log("New thing created: " + JSON.stringify(data));
+                  console.log("New thing created: ");
+                  tools.printJson(data);
               })
               .on('fail', tools.failureHandler);
         })

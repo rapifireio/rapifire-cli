@@ -9,15 +9,15 @@ var tools = require('./tools');
 var config = require('./config');
 
 program
-  .command("signin <email> <password>")
-  .description("Sign in to your existing RAPIFIRE Developer Account")
+  .command("login <email> <password>")
+  .description("Log into to your existing RAPIFIRE Developer Account")
   .action(function(email, password, opts) {
     // POST /api/web/v1/myself username password
-    console.log("Signing in", email);
+    console.log("Logging in " + email + ".");
     rest.get(config.baseWebUrl + '/myself', {username: email, password: password})
       .on('success', function(data, response) {
         tools.writeConfig({username: email, password: password});
-        console.log("Signed in. Email and password is stored in " + tools.getProfileFilename() + ".");
+        console.log("Logged in.\nEmail and password is stored in " + tools.getProfileFilename() + ".");
       })
       .on('fail', tools.failureHandler);
   });
@@ -31,7 +31,7 @@ program
                   {username: email, password: password})
       .on('success', function(data, response) {
         tools.writeConfig({username: email, password: password, activated: false});
-        console.log("Account created. Email and password is stored in " + tools.getProfileFilename() + ". Please check your email and activate your account.");
+        console.log("Account created.\nEmail and password is stored in " + tools.getProfileFilename() + ".\nPlease check your email and activate your account.");
       }).on('fail', tools.failureHandler);
   });
 
