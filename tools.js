@@ -54,7 +54,7 @@ module.exports = {
         var ws = new WebSocket(url);
 
         ws.on('message', function(data) {
-            console.log("<- " + data);
+            console.log(data);
         });
 
         ws.on('close', function close() {
@@ -63,10 +63,7 @@ module.exports = {
         });
 
         ws.on('open', function() {
-            console.log("-> " + JSON.stringify(init));
             ws.send(JSON.stringify(init));
-
-            console.log("-> " + JSON.stringify(packet));
             ws.send(JSON.stringify(packet));
         });
     },
