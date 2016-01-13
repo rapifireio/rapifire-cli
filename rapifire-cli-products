@@ -31,7 +31,8 @@ program
 
     rest.postJson(base, {name: name, heartbeat: heartbeat}, tools.getAuthObj())
       .on('success', function(data, response) {
-    	console.log("New product created: " + JSON.stringify(data));
+    	console.log("New product created:");
+      tools.printJson(data);
       }).on('fail', tools.failureHandler);
   });
 
