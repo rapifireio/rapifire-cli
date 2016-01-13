@@ -75,6 +75,18 @@ program
     });
   });
 
+program
+  .command("delete <thingName>")
+  .description("Delete single thing entry")
+  .action(function(thingName, opts){
+    tools.doForThingName(thingName, function(thingId){
+      rest.del(base + thingId, tools.getAuthObj())
+        .on('success', function(data, response){
+          console.log("Thing " + thingName + " deleted.");
+        })
+        .on('fail', tools.failureHandler);
+    })
+  });
 
 program.parse(process.argv);
 if (!program.args.length) {
