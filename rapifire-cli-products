@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// -*- mode: javascript; -*-
+ // -*- mode: javascript; -*-
 
 "use strict";
 
@@ -18,10 +18,10 @@ program
     console.log("Products:");
 
     rest.get(base, tools.getAuthObj())
-      .on('success', function(data , response) {
-      	tools.printJsonArray(data);
+      .on('success', function(data, response) {
+        tools.printJsonArray(data);
       }).on('fail', tools.failureHandler);
-  });	
+  });
 
 program
   .command("create <name> [heartbeat]")
@@ -30,20 +30,25 @@ program
     // default value for heartbeat is 60 sec
     var heartbeat = heartbeat ? heartbeat : DEFAULT_HEARTBEAT;
 
-    rest.postJson(base, {name: name, heartbeat: heartbeat}, tools.getAuthObj())
+    rest.postJson(base, {
+        name: name,
+        heartbeat: heartbeat
+      }, tools.getAuthObj())
       .on('success', function(data, response) {
-    	console.log("New product created:");
-      tools.printJson(data);
+        console.log("New product created:");
+        tools.printJson(data);
       }).on('fail', tools.failureHandler);
   });
 
 program
   .command("update <productName> <heartbeat>")
   .description("Update heartbeat for product")
-  .action(function(productName, heartbeat, opts){
-    tools.doForProductName(productName, function(productId){
-      rest.putJson(base + productId, {"heartbeat" : heartbeat}, tools.getAuthObj())
-        .on('success', function(data, response){
+  .action(function(productName, heartbeat, opts) {
+    tools.doForProductName(productName, function(productId) {
+      rest.putJson(base + productId, {
+          "heartbeat": heartbeat
+        }, tools.getAuthObj())
+        .on('success', function(data, response) {
           console.log("Product " + productName + " updated.");
         })
         .on('fail', tools.failureHandler);
@@ -53,10 +58,10 @@ program
 program
   .command("delete <productName>")
   .description("Delete single product")
-  .action(function(productName, opts){
-    tools.doForProductName(productName, function(productId){
+  .action(function(productName, opts) {
+    tools.doForProductName(productName, function(productId) {
       rest.del(base + productId, tools.getAuthObj())
-        .on('success', function(data, response){
+        .on('success', function(data, response) {
           console.log("Product " + productName + " deleted.");
         })
         .on('fail', tools.failureHandler);
@@ -68,27 +73,27 @@ program
   .description("List all metadata for given product")
   .action(function(productName, opts) {
 
-    tools.doForProductName(productName, function(productId){
+    tools.doForProductName(productName, function(productId) {
       rest.get(base + productId + '/meta', tools.getAuthObj())
-        .on('success', function(data , response) {
+        .on('success', function(data, response) {
           tools.printJsonArray(data);
         }).on('fail', tools.failureHandler);
     });
 
-});	
+  });
 
 program
   .command("meta-add <productName> <key> <value>")
   .description("Create or update product metadata entry")
-  .action(function(productName, key, value){
+  .action(function(productName, key, value) {
     var metadataJson = {
-        "key"   : key,
-        "value" : value
-      };
+      "key": key,
+      "value": value
+    };
 
-    tools.doForProductName(productName, function(productId){
+    tools.doForProductName(productName, function(productId) {
       rest.putJson(base + productId + '/meta', metadataJson, tools.getAuthObj())
-        .on('success', function(data, response){
+        .on('success', function(data, response) {
           console.log("Metadata added.");
         })
         .on('fail', tools.failureHandler);
@@ -98,13 +103,13 @@ program
 program
   .command("meta-delete <productName> <key>")
   .description("Delete single product's metadata entry")
-  .action(function(productName, key, opts){
+  .action(function(productName, key, opts) {
 
-    tools.doForProductName(productName, function(productId){
+    tools.doForProductName(productName, function(productId) {
       rest.del(base + productId + '/meta/' + encodeURIComponent(key), tools.getAuthObj())
-          .on('success', function(data, response){
-            console.log('Key ' + key + ' deleted for product ' + productName + '.');
-          }).on('fail', tools.failureHandler);
+        .on('success', function(data, response) {
+          console.log('Key ' + key + ' deleted for product ' + productName + '.');
+        }).on('fail', tools.failureHandler);
     });
   });
 

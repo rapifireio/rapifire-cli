@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// -*- mode: javascript; -*-
+ // -*- mode: javascript; -*-
 
 "use strict";
 
@@ -14,8 +14,11 @@ var websocketUrl = config.baseWsUrl;
 console.log("Running developer console...");
 
 var config = tools.readConfig();
-rest.get(base + '/myself', {username: config.username, password: config.password})
-    .on('success', function(data, response) {
-        tools.subscribe(data.authId, data.authKey, "/provider/" + data.providerCompanyId + "/all-things", websocketUrl);
-    })
-    .on('fail', tools.failureHandler);
+rest.get(base + '/myself', {
+    username: config.username,
+    password: config.password
+  })
+  .on('success', function(data, response) {
+    tools.subscribe(data.authId, data.authKey, "/provider/" + data.providerCompanyId + "/all-things", websocketUrl);
+  })
+  .on('fail', tools.failureHandler);

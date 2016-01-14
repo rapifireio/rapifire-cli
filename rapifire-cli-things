@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// -*- mode: javascript; -*-
+ // -*- mode: javascript; -*-
 
 "use strict";
 
@@ -14,40 +14,43 @@ program
   .command("create <name> <product>")
   .description("Create new thing")
   .action(function(name, product, opts) {
-      console.log("Creating new thing named " + name + " for product " + product);
+    console.log("Creating new thing named " + name + " for product " + product);
 
-      tools.doForProductName(product, function(productId){
-          rest.postJson(base, {productId: productId, name:  name}, tools.getAuthObj())
-              .on('success', function(data, response) {
-                  console.log("New thing created: ");
-                  tools.printJson(data);
-              })
-              .on('fail', tools.failureHandler);
+    tools.doForProductName(product, function(productId) {
+      rest.postJson(base, {
+          productId: productId,
+          name: name
+        }, tools.getAuthObj())
+        .on('success', function(data, response) {
+          console.log("New thing created: ");
+          tools.printJson(data);
         })
+        .on('fail', tools.failureHandler);
+    })
   });
 
 
 program
   .command("update <name> <newName> <newProductName> [userName]")
   .description("Update thing entry")
-  .action(function(name, newName, newProductName, userName, opts){
-    tools.doForThingName(name, function(thingId){
-      tools.doForProductName(newProductName, function(productId){
+  .action(function(name, newName, newProductName, userName, opts) {
+    tools.doForThingName(name, function(thingId) {
+      tools.doForProductName(newProductName, function(productId) {
         var updateJson = {
-          name : newName,
-          productId : productId
+          name: newName,
+          productId: productId
         }
 
-        var updateThing = function(json){
+        var updateThing = function(json) {
           rest.putJson(base + thingId, json, tools.getAuthObj())
-          .on('success', function(data, response){
-            console.log("Thing updated.");
-          })
-          .on('fail', tools.failureHandler);
+            .on('success', function(data, response) {
+              console.log("Thing updated.");
+            })
+            .on('fail', tools.failureHandler);
         }
 
-        if(userName && userName.length > 0) {
-          tools.doForUserName(userName, function(userId){
+        if (userName && userName.length > 0) {
+          tools.doForUserName(userName, function(userId) {
             updateJson.userId = userId;
             updateThing(updateJson);
           });
@@ -59,27 +62,27 @@ program
   });
 
 program
-    .command("assign <thingName> <username>")
-    .description("Assign thing to user")
-    .action(function(thingName, username, opts){
-        tools.doForThingName(thingName, function(thingId){
-            tools.doForUserName(username, function(userId){
-                rest.postJson(base + thingId + '/assign/' + userId, {}, tools.getAuthObj())
-                    .on('success', function(data, response){
-                        console.log("Thing successfully assigned.")
-                    })
-                    .on('fail', tools.failureHandler);
-            });
-        });
+  .command("assign <thingName> <username>")
+  .description("Assign thing to user")
+  .action(function(thingName, username, opts) {
+    tools.doForThingName(thingName, function(thingId) {
+      tools.doForUserName(username, function(userId) {
+        rest.postJson(base + thingId + '/assign/' + userId, {}, tools.getAuthObj())
+          .on('success', function(data, response) {
+            console.log("Thing successfully assigned.")
+          })
+          .on('fail', tools.failureHandler);
+      });
     });
+  });
 
 program
   .command("delete <thingName>")
   .description("Delete single thing entry")
-  .action(function(thingName, opts){
-    tools.doForThingName(thingName, function(thingId){
+  .action(function(thingName, opts) {
+    tools.doForThingName(thingName, function(thingId) {
       rest.del(base + thingId, tools.getAuthObj())
-        .on('success', function(data, response){
+        .on('success', function(data, response) {
           console.log("Thing " + thingName + " deleted.");
         })
         .on('fail', tools.failureHandler);
@@ -89,10 +92,10 @@ program
 program
   .command("show <thingName>")
   .description("Show thing")
-  .action(function(thingName, opts){
-    tools.doForThingName(thingName, function(thingId){
+  .action(function(thingName, opts) {
+    tools.doForThingName(thingName, function(thingId) {
       rest.get(base + thingId, tools.getAuthObj())
-        .on('success', function(data, response){
+        .on('success', function(data, response) {
           tools.printJson(data);
         })
         .on('fail', tools.failureHandler);
@@ -104,27 +107,27 @@ program
   .description("List metadata for thing")
   .action(function(thingName, opts) {
 
-    tools.doForThingName(thingName, function(thingId){
+    tools.doForThingName(thingName, function(thingId) {
       rest.get(base + thingId + '/meta', tools.getAuthObj())
-        .on('success', function(data , response) {
+        .on('success', function(data, response) {
           tools.printJsonArray(data);
         }).on('fail', tools.failureHandler);
     });
 
-}); 
+  });
 
 program
   .command("meta-add <thingName> <key> <value>")
   .description("Create or update thing metadata entry")
-  .action(function(thingName, key, value){
+  .action(function(thingName, key, value) {
     var metadataJson = {
-        "key"   : key,
-        "value" : value
-      };
+      "key": key,
+      "value": value
+    };
 
-    tools.doForThingName(thingName, function(thingId){
+    tools.doForThingName(thingName, function(thingId) {
       rest.putJson(base + thingId + '/meta', metadataJson, tools.getAuthObj())
-        .on('success', function(data, response){
+        .on('success', function(data, response) {
           console.log("Metadata added successfully.");
         })
         .on('fail', tools.failureHandler);
@@ -134,34 +137,34 @@ program
 program
   .command("meta-delete <thingName> <key>")
   .description("Delete single thing's metadata entry")
-  .action(function(thingName, key, opts){
+  .action(function(thingName, key, opts) {
 
-    tools.doForThingName(thingName, function(thingId){
+    tools.doForThingName(thingName, function(thingId) {
       rest.del(base + thingId + '/meta/' + encodeURIComponent(key), tools.getAuthObj())
-          .on('success', function(data, response){
-            console.log('Key ' + key + ' deleted successfully for thing ' + thingName + '.');
-          }).on('fail', tools.failureHandler);
+        .on('success', function(data, response) {
+          console.log('Key ' + key + ' deleted successfully for thing ' + thingName + '.');
+        }).on('fail', tools.failureHandler);
     });
   });
 
 program
-    .command("list <query>")
-    .description("List things")
-    .option("-s, --short", "Show short summary of each things as output (instead of full JSON response)")
-    .action(function(query, opts) {
-        rest.get(base + "?query=" + encodeURIComponent(query), tools.getAuthObj())
-            .on('success', function(data, response) {
-                if (opts.short) {
-                    console.log("Thing Id, Thing Token, Thing Name, Product Name");
-                    for (var i = 0; i < data.length; i++) {
-                        console.log(data[i].thingId + ", " + data[i].thingToken + ", " + data[i].name + ", " + data[i].product.name);
-                    }
-                } else {
-                    tools.printJson(data);
-                }
-                console.log("Total count: " + response.headers['x-total-count']);
-            })
-            .on('fail', tools.failureHandler);
-    });
+  .command("list <query>")
+  .description("List things")
+  .option("-s, --short", "Show short summary of each things as output (instead of full JSON response)")
+  .action(function(query, opts) {
+    rest.get(base + "?query=" + encodeURIComponent(query), tools.getAuthObj())
+      .on('success', function(data, response) {
+        if (opts.short) {
+          console.log("Thing Id, Thing Token, Thing Name, Product Name");
+          for (var i = 0; i < data.length; i++) {
+            console.log(data[i].thingId + ", " + data[i].thingToken + ", " + data[i].name + ", " + data[i].product.name);
+          }
+        } else {
+          tools.printJson(data);
+        }
+        console.log("Total count: " + response.headers['x-total-count']);
+      })
+      .on('fail', tools.failureHandler);
+  });
 
 program.parse(process.argv);

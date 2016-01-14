@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// -*- mode: javascript; -*-
+ // -*- mode: javascript; -*-
 
 "use strict";
 
@@ -14,9 +14,15 @@ program
   .action(function(email, password, opts) {
     // POST /api/web/v1/myself username password
     console.log("Logging in " + email + ".");
-    rest.get(config.baseWebUrl + '/myself', {username: email, password: password})
+    rest.get(config.baseWebUrl + '/myself', {
+        username: email,
+        password: password
+      })
       .on('success', function(data, response) {
-        tools.writeConfig({username: email, password: password});
+        tools.writeConfig({
+          username: email,
+          password: password
+        });
         console.log("Logged in.\nEmail and password is stored in " + tools.getProfileFilename() + ".");
       })
       .on('fail', tools.failureHandler);
@@ -27,10 +33,16 @@ program
   .description("Initialize RAPIFIRE Developer Account")
   .action(function(email, password, opts) {
     console.log("Registering", email);
-    rest.postJson(config.baseWebUrl + '/developers',
-                  {username: email, password: password})
+    rest.postJson(config.baseWebUrl + '/developers', {
+        username: email,
+        password: password
+      })
       .on('success', function(data, response) {
-        tools.writeConfig({username: email, password: password, activated: false});
+        tools.writeConfig({
+          username: email,
+          password: password,
+          activated: false
+        });
         console.log("Account created.\nEmail and password is stored in " + tools.getProfileFilename() + ".\nPlease check your email and activate your account.");
       }).on('fail', tools.failureHandler);
   });
@@ -42,7 +54,7 @@ program
     console.log("Activating", activationCode);
 
     rest.get(config.baseWebUrl + '/developers?token=' + activationCode)
-      .on('success', function(data , response) {
+      .on('success', function(data, response) {
         var config = tools.readConfig();
         config.activated = true;
         tools.writeConfig(config);
@@ -55,10 +67,9 @@ program
   .command("things", "Things management commands")
   .command("users", "Users management commands")
   .command("cloud-code", "Cloud Code management")
-  .command("console","Things real-time data console")
+  .command("console", "Things real-time data console")
   .command("publish", "Publish data to the cloud")
-  .command("subscribe", "Subscribe to command channels")
-;
+  .command("subscribe", "Subscribe to command channels");
 
 program.parse(process.argv);
 

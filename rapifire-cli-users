@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// -*- mode: javascript; -*-
+ // -*- mode: javascript; -*-
 
 "use strict";
 
@@ -16,18 +16,18 @@ program
   .description("List all users")
   .action(function(opts) {
     rest.get(base, tools.getAuthObj())
-      .on('success', function(data , response) {
-      	tools.printJsonArray(data);
+      .on('success', function(data, response) {
+        tools.printJsonArray(data);
       }).on('fail', tools.failureHandler);
-  });	
+  });
 
 program
   .command("show <login>")
   .description("Returns single user.")
-  .action(function(login, opts){
-    tools.doForUserName(login, function(userId){
+  .action(function(login, opts) {
+    tools.doForUserName(login, function(userId) {
       rest.get(base + userId, tools.getAuthObj())
-        .on('success', function(data, response){
+        .on('success', function(data, response) {
           tools.printJson(data);
         })
         .on('fail', tools.failureHandler);
@@ -40,15 +40,15 @@ program
   .action(function(login, password, name, description, opts) {
     var description = description ? description : 'This user is created by rapifire-cli';
     var newUserData = {
-      login: login, 
-      password: password, 
-      name: name, 
+      login: login,
+      password: password,
+      name: name,
       description: description
     }
 
     rest.postJson(base, newUserData, tools.getAuthObj())
       .on('success', function(data, response) {
-    	 console.log("User " + name + " created.");
+        console.log("User " + name + " created.");
       }).on('fail', tools.failureHandler);
   });
 
@@ -57,14 +57,14 @@ program
   .description("Update user name, description and optionally password")
   .action(function(login, name, description, password, opts) {
     var updateJson = {
-      "name" : name,
-      "description" : description,
-      "password" : password
+      "name": name,
+      "description": description,
+      "password": password
     }
 
-    tools.doForUserName(login, function(userId){
+    tools.doForUserName(login, function(userId) {
       rest.putJson(base + userId, updateJson, tools.getAuthObj())
-        .on('success', function(data, response){
+        .on('success', function(data, response) {
           console.log("User " + name + " updated.");
         })
         .on('fail', tools.failureHandler);
@@ -74,10 +74,10 @@ program
 program
   .command("delete <login>")
   .description("Delete single user.")
-  .action(function(login, opts){
-    tools.doForUserName(login, function(userId){
+  .action(function(login, opts) {
+    tools.doForUserName(login, function(userId) {
       rest.del(base + userId, tools.getAuthObj())
-        .on('success', function(data, response){
+        .on('success', function(data, response) {
           console.log("User " + login + " deleted.");
         })
         .on('fail', tools.failureHandler);
@@ -87,10 +87,10 @@ program
 program
   .command("meta <login>")
   .description("List all metadata for user")
-  .action(function(login, opts){
-    tools.doForUserName(login, function(userId){
+  .action(function(login, opts) {
+    tools.doForUserName(login, function(userId) {
       rest.get(base + userId + '/meta', tools.getAuthObj())
-        .on('success', function(data, response){
+        .on('success', function(data, response) {
           tools.printJsonArray(data);
         }).on('fail', tools.failureHandler);
     })
@@ -100,10 +100,10 @@ program
 program
   .command("meta-show <login> <key>")
   .description("Show single metadata entry")
-  .action(function(login, key, opts){
-    tools.doForUserName(login, function(userId){
+  .action(function(login, key, opts) {
+    tools.doForUserName(login, function(userId) {
       rest.get(base + userId + '/meta/' + encodeURIComponent(key), tools.getAuthObj())
-        .on('success', function(data, response){
+        .on('success', function(data, response) {
           tools.printJson(data);
         }).on('fail', tools.failureHandler);
     })
@@ -113,15 +113,15 @@ program
 program
   .command("meta-add <login> <key> <value>")
   .description("Create or update user metadata entry")
-  .action(function(login, key, value, opts){
+  .action(function(login, key, value, opts) {
     var metadataJson = {
-        "key"   : key,
-        "value" : value
-      };
+      "key": key,
+      "value": value
+    };
 
-    tools.doForUserName(login, function(userId){
+    tools.doForUserName(login, function(userId) {
       rest.putJson(base + userId + '/meta', metadataJson, tools.getAuthObj())
-        .on('success', function(data, response){
+        .on('success', function(data, response) {
           console.log('Metadata added.');
         }).on('fail', tools.failureHandler);
     })
@@ -131,15 +131,15 @@ program
 program
   .command("meta-delete <login> <key>")
   .description("Delete user metadata entry")
-  .action(function(login, key, opts){
-    tools.doForUserName(login, function(userId){
+  .action(function(login, key, opts) {
+    tools.doForUserName(login, function(userId) {
       rest.del(base + userId + '/meta/' + encodeURIComponent(key), tools.getAuthObj())
-        .on('success', function(data, response){
+        .on('success', function(data, response) {
           console.log('Metadata deleted.');
         }).on('fail', tools.failureHandler);
     })
 
-  });  
+  });
 
 program.parse(process.argv);
 if (!program.args.length) {
