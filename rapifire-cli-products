@@ -100,7 +100,7 @@ program
   .action(function(productName, key, opts){
 
     tools.doForProductName(productName, function(productId){
-      rest.del(base + productId + '/meta/' + key, tools.getAuthObj())
+      rest.del(base + productId + '/meta/' + encodeURIComponent(key), tools.getAuthObj())
           .on('success', function(data, response){
             console.log('Key ' + key + ' deleted successfully for product ' + productName + '.');
           }).on('fail', tools.failureHandler);

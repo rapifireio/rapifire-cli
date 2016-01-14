@@ -102,7 +102,7 @@ program
   .description("Show single metadata entry")
   .action(function(login, key, opts){
     tools.doForUserName(login, function(userId){
-      rest.get(base + userId + '/meta/' + key, tools.getAuthObj())
+      rest.get(base + userId + '/meta/' + encodeURIComponent(key), tools.getAuthObj())
         .on('success', function(data, response){
           tools.printJson(data);
         }).on('fail', tools.failureHandler);
@@ -133,7 +133,7 @@ program
   .description("Delete user metadata entry")
   .action(function(login, key, opts){
     tools.doForUserName(login, function(userId){
-      rest.del(base + userId + '/meta/' + key, tools.getAuthObj())
+      rest.del(base + userId + '/meta/' + encodeURIComponent(key), tools.getAuthObj())
         .on('success', function(data, response){
           console.log('Metadata deleted.');
         }).on('fail', tools.failureHandler);
