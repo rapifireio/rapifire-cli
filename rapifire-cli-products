@@ -44,7 +44,7 @@ program
     tools.doForProductName(productName, function(productId){
       rest.putJson(base + productId, {"heartbeat" : heartbeat}, tools.getAuthObj())
         .on('success', function(data, response){
-          console.log("Product " + productName + " updated successfully.");
+          console.log("Product " + productName + " updated.");
         })
         .on('fail', tools.failureHandler);
     });
@@ -57,7 +57,7 @@ program
     tools.doForProductName(productName, function(productId){
       rest.del(base + productId, tools.getAuthObj())
         .on('success', function(data, response){
-          console.log("Product " + productName + " deleted successfully.");
+          console.log("Product " + productName + " deleted.");
         })
         .on('fail', tools.failureHandler);
     });
@@ -89,7 +89,7 @@ program
     tools.doForProductName(productName, function(productId){
       rest.putJson(base + productId + '/meta', metadataJson, tools.getAuthObj())
         .on('success', function(data, response){
-          console.log("Metadata added successfully.");
+          console.log("Metadata added.");
         })
         .on('fail', tools.failureHandler);
     });
@@ -103,7 +103,7 @@ program
     tools.doForProductName(productName, function(productId){
       rest.del(base + productId + '/meta/' + encodeURIComponent(key), tools.getAuthObj())
           .on('success', function(data, response){
-            console.log('Key ' + key + ' deleted successfully for product ' + productName + '.');
+            console.log('Key ' + key + ' deleted for product ' + productName + '.');
           }).on('fail', tools.failureHandler);
     });
   });
