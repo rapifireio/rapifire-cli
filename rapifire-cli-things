@@ -88,7 +88,7 @@ program
 
 program
   .command("show <thingName>")
-  .description("Show thing.")
+  .description("Show thing")
   .action(function(thingName, opts){
     tools.doForThingName(thingName, function(thingId){
       rest.get(base + thingId, tools.getAuthObj())
@@ -144,7 +144,24 @@ program
     });
   });
 
+program
+    .command("list <query>")
+    .description("List things")
+    .option("-s, --short", "Show short summary of each things as output (instead of full JSON response)")
+    .action(function(query, opts) {
+        rest.get(base + "?query=" + encodeURIComponent(query), tools.getAuthObj())
+            .on('success', function(data, response) {
+                if (opts.short) {
+                    console.log("Thing Id, Thing Token, Thing Name, Product Name");
+                    for (var i = 0; i < data.length; i++) {
+                        console.log(data[i].thingId + ", " + data[i].thingToken + ", " + data[i].name + ", " + data[i].product.name);
+                    }
+                } else {
+                    tools.printJson(data);
+                }
+                console.log("Total count: " + response.headers['x-total-count']);
+            })
+            .on('fail', tools.failureHandler);
+    });
+
 program.parse(process.argv);
-if (!program.args.length) {
-  program.help();
-}
