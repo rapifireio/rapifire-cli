@@ -7,6 +7,7 @@ var program = require('commander');
 var rest = require('restler');
 var tools = require('./tools');
 var config = require('./config');
+var DEFAULT_HEARTBEAT = 300;
 
 var base = config.baseApiUrl + "/products/";
 
@@ -27,7 +28,7 @@ program
   .description("Create new product")
   .action(function(name, heartbeat, opts) {
     // default value for heartbeat is 60 sec
-    var heartbeat = heartbeat ? heartbeat : 60;
+    var heartbeat = heartbeat ? heartbeat : DEFAULT_HEARTBEAT;
 
     rest.postJson(base, {name: name, heartbeat: heartbeat}, tools.getAuthObj())
       .on('success', function(data, response) {
