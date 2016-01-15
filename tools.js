@@ -14,6 +14,9 @@ module.exports = {
     urlActivate: function(token) {
         return config.baseWebUrl + '/developers?token=' + token;
     },
+    urlCloudCode: function(productId) {
+        return config.baseApiUrl + "/code/" + productId;
+    },
     urlProductByName: function(name) {
         return config.baseApiUrl + "/products/?name=" + encodeURIComponent(name);
     },
