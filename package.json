@@ -1,6 +1,6 @@
 {
   "name": "rapifire-cli",
-  "version": "0.2.1",
+  "version": "0.2.3",
   "description": "[RAPIFIRE](http://rapifire.com) Command Line Client",
   "main": "index.js",
   "scripts": {
