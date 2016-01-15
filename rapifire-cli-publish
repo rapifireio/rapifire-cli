@@ -6,10 +6,6 @@
 var program = require('commander');
 var rest = require('restler');
 var tools = require('./tools');
-var config = require('./config');
-
-var base = config.baseApiUrl + "/channels/";
-var getThingByName = config.baseApiUrl + "/things/?thingName="
 
 program
   .command("as <name> <data>")
@@ -28,8 +24,7 @@ program
   });
 
 function doPublish(name, dataToPublish, channel) {
-  var config = tools.readConfig();
-  rest.get(getThingByName + name, tools.getAuthObj())
+    rest.get(tools.urlThingByName(name), tools.getAuthObj())
     .on('complete', function(data, response) {
       var thing = null;
       for (var i = 0; i < data.length; i++) {
@@ -50,15 +45,15 @@ function doPublish(name, dataToPublish, channel) {
         try {
           toPublish = JSON.parse(dataToPublish);
         } catch (e) {
-          console.log("Invalid JSON SenML");
+          console.log("Invalid JSON SenML.");
           process.exit(1);
         }
       }
 
-      var publish = function(authId, authToken) {
-        rest.postJson(base + "/" + thing.thingId + "/" + channel, toPublish, {
+      var publish = function(authId, authKey) {
+          rest.postJson(tools.urlChannels(thing.thingId, channel), toPublish, {
             username: authId,
-            password: authToken
+            password: authKey
           })
           .on('success', function(data, response) {
             console.log("Data successfully published.");
@@ -67,18 +62,10 @@ function doPublish(name, dataToPublish, channel) {
       }
 
       if (channel === 'commands') {
-        doAsMyself(publish);
+        tools.doForMyself(publish);
       } else {
         publish(thing.thingId, thing.thingToken);
       }
-    })
-    .on('fail', tools.failureHandler);
-}
-
-function doAsMyself(callback) {
-  rest.get(config.baseApiUrl + '/myself', tools.getAuthObj())
-    .on('success', function(data, response) {
-      callback(data.authId, data.authKey)
     })
     .on('fail', tools.failureHandler);
 }

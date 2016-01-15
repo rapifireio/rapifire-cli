@@ -41,7 +41,9 @@ module.exports = {
     urlThingByName: function(name) {
         return config.baseApiUrl + "/things/?thingName=" + encodeURIComponent(name);
     },
-
+    urlChannels: function(thingId, channel) {
+        return config.baseApiUrl + "/channels/" + "/" + thingId + "/" + channel;
+    },
   getProfileFilename: function() {
     return (process.env.HOME || process.env.USERPROFILE) + path.sep + ".rapifire-cli";
   },
@@ -140,7 +142,7 @@ module.exports = {
     doForMyself: function(callback) {
         rest.get(this.urlMyself(), this.getAuthObj())
             .on('success', function(data, response) {
-                callback(data);
+                callback(data.authId, data.authKey, data.providerCompanyId);
             })
             .on('fail', this.failureHandler);
     },
