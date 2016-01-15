@@ -21,7 +21,10 @@
     "restler": "^3.4.0",
     "ws": "^1.0.1"
   },
-  "bin" : {
-    "rapifire-cli" : "./rapifire-cli"
+  "bin": {
+    "rapifire-cli": "./rapifire-cli"
+  },
+  "devDependencies": {
+    "gulp-jsbeautifier": "^1.0.1"
   }
 }
