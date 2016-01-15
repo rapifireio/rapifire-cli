@@ -8,17 +8,8 @@ var rest = require('restler');
 var tools = require('./tools');
 var config = require('./config');
 
-var base = config.baseApiUrl;
-var websocketUrl = config.baseWsUrl;
-
 console.log("Running developer console...");
 
-var config = tools.readConfig();
-rest.get(base + '/myself', {
-    username: config.username,
-    password: config.password
-  })
-  .on('success', function(data, response) {
-    tools.subscribe(data.authId, data.authKey, "/provider/" + data.providerCompanyId + "/all-things", websocketUrl);
-  })
-  .on('fail', tools.failureHandler);
+tools.doForMyself(function(data) {
+    tools.subscribe(data.authId, data.authKey, "/provider/" + data.providerCompanyId + "/all-things", config.baseWsUrl);
+});

@@ -17,6 +17,9 @@ module.exports = {
     urlCloudCode: function(productId) {
         return config.baseApiUrl + "/code/" + productId;
     },
+    urlMyself: function() {
+        return config.baseApiUrl + "/myself";
+    },
     urlProductByName: function(name) {
         return config.baseApiUrl + "/products/?name=" + encodeURIComponent(name);
     },
@@ -89,7 +92,7 @@ module.exports = {
     });
   },
   doForProductName: function(productName, callback) {
-    rest.get(urlProductByName(productName), this.getAuthObj())
+    rest.get(this.urlProductByName(productName), this.getAuthObj())
       .on('success', function(data, response) {
         if (data.length != 1) {
           console.log("Found " + data.length + " products. Expected single product.");
@@ -100,7 +103,7 @@ module.exports = {
       }).on('fail', this.failureHandler);
   },
   doForUserName: function(username, callback) {
-    rest.get(urlUserByName(username), this.getAuthObj())
+    rest.get(this.urlUserByName(username), this.getAuthObj())
       .on('success', function(data, response) {
         if (data.length != 1) {
           console.log("Found " + data.length + " users. Expected single user.");
@@ -111,7 +114,7 @@ module.exports = {
       }).on('fail', this.failureHandler);
   },
   doForThingName: function(thingName, callback) {
-    rest.get(urlThingByName(thingName), this.getAuthObj())
+    rest.get(this.urlThingByName(thingName), this.getAuthObj())
       .on('success', function(data, response) {
         if (data.length != 1) {
           console.log("Found " + data.length + " things. Expected single thing.");
@@ -121,5 +124,13 @@ module.exports = {
         callback(thingId);
       })
       .on('fail', this.failureHandler);
-  }
+  },
+    doForMyself: function(callback) {
+        rest.get(this.urlMyself(), this.getAuthObj())
+            .on('success', function(data, response) {
+                callback(data);
+            })
+            .on('fail', this.failureHandler);
+    },
+
 }
