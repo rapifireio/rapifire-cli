@@ -4,11 +4,17 @@ var WebSocket = require('ws');
 var rest = require('restler');
 var config = require('./config');
 
-var getProductByNameUrl = config.baseApiUrl + "/products/?name=";
-var getUserByNameUrl = config.baseApiUrl + "/users/?username=";
-var getThingByNameUrl = config.baseApiUrl + "/things/"
-
 module.exports = {
+    urlProductByName: function(name) {
+        return config.baseApiUrl + "/products/?name=" + encodeURIComponent(name);
+    },
+    urlUserByName: function(name) {
+        return config.baseApiUrl + "/users/?username=" + encodeURIComponent(name);
+    },
+    urlThingByName: function(name) {
+        return config.baseApiUrl + "/things/?thingName=" + encodeURIComponent(name);
+    },
+
   getProfileFilename: function() {
     return (process.env.HOME || process.env.USERPROFILE) + path.sep + ".rapifire-cli";
   },
@@ -71,7 +77,7 @@ module.exports = {
     });
   },
   doForProductName: function(productName, callback) {
-    rest.get(getProductByNameUrl + encodeURIComponent(productName), this.getAuthObj())
+    rest.get(urlProductByName(productName), this.getAuthObj())
       .on('success', function(data, response) {
         if (data.length != 1) {
           console.log("Found " + data.length + " products. Expected single product.");
@@ -82,7 +88,7 @@ module.exports = {
       }).on('fail', this.failureHandler);
   },
   doForUserName: function(username, callback) {
-    rest.get(getUserByNameUrl + encodeURIComponent(username), this.getAuthObj())
+    rest.get(urlUserByName(username), this.getAuthObj())
       .on('success', function(data, response) {
         if (data.length != 1) {
           console.log("Found " + data.length + " users. Expected single user.");
@@ -93,7 +99,7 @@ module.exports = {
       }).on('fail', this.failureHandler);
   },
   doForThingName: function(thingName, callback) {
-    rest.get(getThingByNameUrl + "?thingName=" + encodeURIComponent(thingName), this.getAuthObj())
+    rest.get(urlThingByName(thingName), this.getAuthObj())
       .on('success', function(data, response) {
         if (data.length != 1) {
           console.log("Found " + data.length + " things. Expected single thing.");
