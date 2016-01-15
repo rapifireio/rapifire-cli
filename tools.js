@@ -20,6 +20,18 @@ module.exports = {
     urlMyself: function() {
         return config.baseApiUrl + "/myself";
     },
+    urlProducts: function() {
+        return config.baseApiUrl + "/products/";
+    },
+    urlProduct: function(productId) {
+        return config.baseApiUrl + "/products/" + productId;
+    },
+    urlProductMeta: function(productId) {
+        return config.baseApiUrl + "/products/" + productId + "/meta";
+    },
+    urlProductMetaKey: function(productId, key) {
+        return config.baseApiUrl + "/products/" + productId + "/meta/" + encodeURIComponent(key);
+    },
     urlProductByName: function(name) {
         return config.baseApiUrl + "/products/?name=" + encodeURIComponent(name);
     },
