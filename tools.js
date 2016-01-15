@@ -85,7 +85,8 @@ module.exports = {
     var packet = {
       "operation": "subscribe",
       "data": {
-        "channel": channel
+          "channel": channel,
+          "interactive": true
       }
     };
 
