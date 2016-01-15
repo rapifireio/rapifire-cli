@@ -6,7 +6,6 @@
 var program = require('commander');
 var rest = require('restler');
 var tools = require('./tools');
-var config = require('./config');
 
 program
   .command("login <email> <password>")
@@ -14,7 +13,7 @@ program
   .action(function(email, password, opts) {
     // POST /api/web/v1/myself username password
     console.log("Logging in " + email + ".");
-    rest.get(config.baseWebUrl + '/myself', {
+      rest.get(tools.urlLogin(), {
         username: email,
         password: password
       })
@@ -33,7 +32,7 @@ program
   .description("Initialize RAPIFIRE Developer Account")
   .action(function(email, password, opts) {
     console.log("Registering", email);
-    rest.postJson(config.baseWebUrl + '/developers', {
+      rest.postJson(tools.urlRegister(), {
         username: email,
         password: password
       })
@@ -52,8 +51,7 @@ program
   .description("Activate your RAPIFIRE Developer Account")
   .action(function(activationCode, opts) {
     console.log("Activating", activationCode);
-
-    rest.get(config.baseWebUrl + '/developers?token=' + activationCode)
+      rest.get(tools.urlActivate(activationCode))
       .on('success', function(data, response) {
         var config = tools.readConfig();
         config.activated = true;

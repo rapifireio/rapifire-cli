@@ -5,6 +5,15 @@ var rest = require('restler');
 var config = require('./config');
 
 module.exports = {
+    urlLogin: function() {
+        return config.baseWebUrl + '/myself';
+    },
+    urlRegister: function() {
+        return config.baseWebUrl + '/developers';
+    },
+    urlActivate: function(token) {
+        return config.baseWebUrl + '/developers?token=' + token;
+    },
     urlProductByName: function(name) {
         return config.baseApiUrl + "/products/?name=" + encodeURIComponent(name);
     },
