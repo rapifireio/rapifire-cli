@@ -147,26 +147,32 @@ program
 
 program
   .command("list <query>")
-  .description("List things")
-  .option("-s, --short", "Show short summary of each things as output (instead of full JSON response)")
+  .description("List things, JSON format")
   .action(function(query, opts) {
       rest.get(tools.urlThings() + "?query=" + encodeURIComponent(query), tools.getAuthObj())
       .on('success', function(data, response) {
-        if (opts.short) {
+          tools.printJson(data);
+        console.log("Total count: " + response.headers['x-total-count']);
+      })
+      .on('fail', tools.failureHandler);
+  });
+
+program
+  .command("list-short <query>")
+  .description("List things, short format")
+  .action(function(query, opts) {
+      rest.get(tools.urlThings() + "?query=" + encodeURIComponent(query), tools.getAuthObj())
+      .on('success', function(data, response) {
           console.log("Thing Id, Thing Token, Thing Name, Product Name");
           for (var i = 0; i < data.length; i++) {
             console.log(data[i].thingId + ", " + data[i].thingToken + ", " + data[i].name + ", " + data[i].product.name);
           }
-        } else {
-          tools.printJson(data);
-        }
         console.log("Total count: " + response.headers['x-total-count']);
       })
       .on('fail', tools.failureHandler);
   });
 
 program.parse(process.argv);
-// commander bug for command options, -s from list cant be used if below lines are uncommented
-//if (!program.args.length) {
-//  program.help();
-//}
+if (!program.args.length) {
+  program.help();
+}

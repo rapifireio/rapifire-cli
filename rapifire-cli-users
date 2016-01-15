@@ -23,7 +23,7 @@ program
 
 program
   .command("show <login>")
-  .description("Returns single user.")
+  .description("Returns single user")
   .action(function(login, opts) {
     tools.doForUserName(login, function(userId) {
       rest.get(base + userId, tools.getAuthObj())
@@ -53,7 +53,7 @@ program
   });
 
 program
-  .command("update <login> <name> <description> [password]]")
+  .command("update <login> <name> <description> [password]")
   .description("Update user name, description and optionally password")
   .action(function(login, name, description, password, opts) {
     var updateJson = {
