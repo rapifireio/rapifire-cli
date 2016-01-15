@@ -8,22 +8,12 @@ var rest = require('restler');
 var tools = require('./tools');
 var config = require('./config');
 
-var WebSocket = require('ws');
-
-var getThingByName = config.baseApiUrl + "/things/?query=";
-var websocketUrl = config.baseWsUrl;
-
 program
   .command("as <name>")
   .description("Subscribe as a Thing to it's command channel")
   .action(function(name, opts) {
     console.log("Subscribing as " + name + " to it's command channel.");
-
-    var config = tools.readConfig();
-    rest.get(getThingByName + name, {
-        username: config.username,
-        password: config.password
-      })
+      rest.get(tools.urlThingByName(name), tools.getAuthObj())
       .on('complete', function(data, response) {
 
         var thing = null;
@@ -37,7 +27,7 @@ program
           console.log("Thing not found.");
           process.exit(1);
         }
-        tools.subscribe(thing.thingId, thing.thingToken, "/" + thing.thingId + "/commands", websocketUrl);
+        tools.subscribe(thing.thingId, thing.thingToken, "/" + thing.thingId + "/commands", config.baseWsUrl);
       })
       .on('fail', tools.failureHandler);
 

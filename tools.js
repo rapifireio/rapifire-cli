@@ -78,7 +78,7 @@ module.exports = {
       "operation": "init",
       "data": {
         "authId": authId,
-        "authKey": authKey,
+        "authKey": authKey
       }
     };
 
