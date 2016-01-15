@@ -8,8 +8,6 @@ var rest = require('restler');
 var tools = require('./tools');
 var config = require('./config');
 
-var base = config.baseApiUrl + "/things/";
-
 program
   .command("create <name> <product>")
   .description("Create new thing")
@@ -17,7 +15,7 @@ program
     console.log("Creating new thing named " + name + " for product " + product);
 
     tools.doForProductName(product, function(productId) {
-      rest.postJson(base, {
+        rest.postJson(tools.urlThings(), {
           productId: productId,
           name: name
         }, tools.getAuthObj())
@@ -42,7 +40,7 @@ program
         }
 
         var updateThing = function(json) {
-          rest.putJson(base + thingId, json, tools.getAuthObj())
+            rest.putJson(tools.urlThing(thingId), json, tools.getAuthObj())
             .on('success', function(data, response) {
               console.log("Thing updated.");
             })
@@ -67,7 +65,7 @@ program
   .action(function(thingName, username, opts) {
     tools.doForThingName(thingName, function(thingId) {
       tools.doForUserName(username, function(userId) {
-        rest.postJson(base + thingId + '/assign/' + userId, {}, tools.getAuthObj())
+          rest.postJson(tools.urlThing(thingId) + '/assign/' + userId, {}, tools.getAuthObj())
           .on('success', function(data, response) {
             console.log("Thing successfully assigned.")
           })
@@ -81,7 +79,7 @@ program
   .description("Delete single thing entry")
   .action(function(thingName, opts) {
     tools.doForThingName(thingName, function(thingId) {
-      rest.del(base + thingId, tools.getAuthObj())
+        rest.del(tools.urlThib(thingId), tools.getAuthObj())
         .on('success', function(data, response) {
           console.log("Thing " + thingName + " deleted.");
         })
@@ -94,7 +92,7 @@ program
   .description("Show thing")
   .action(function(thingName, opts) {
     tools.doForThingName(thingName, function(thingId) {
-      rest.get(base + thingId, tools.getAuthObj())
+        rest.get(tools.urlThing(thingId), tools.getAuthObj())
         .on('success', function(data, response) {
           tools.printJson(data);
         })
@@ -108,7 +106,7 @@ program
   .action(function(thingName, opts) {
 
     tools.doForThingName(thingName, function(thingId) {
-      rest.get(base + thingId + '/meta', tools.getAuthObj())
+        rest.get(tools.urlThing(thingId) + '/meta', tools.getAuthObj())
         .on('success', function(data, response) {
           tools.printJsonArray(data);
         }).on('fail', tools.failureHandler);
@@ -126,7 +124,7 @@ program
     };
 
     tools.doForThingName(thingName, function(thingId) {
-      rest.putJson(base + thingId + '/meta', metadataJson, tools.getAuthObj())
+      rest.putJson(tools.urlThing(thingId) + '/meta', metadataJson, tools.getAuthObj())
         .on('success', function(data, response) {
           console.log("Metadata added successfully.");
         })
@@ -140,7 +138,7 @@ program
   .action(function(thingName, key, opts) {
 
     tools.doForThingName(thingName, function(thingId) {
-      rest.del(base + thingId + '/meta/' + encodeURIComponent(key), tools.getAuthObj())
+      rest.del(tools.urlThing(thingId) + '/meta/' + encodeURIComponent(key), tools.getAuthObj())
         .on('success', function(data, response) {
           console.log('Key ' + key + ' deleted successfully for thing ' + thingName + '.');
         }).on('fail', tools.failureHandler);
@@ -152,7 +150,7 @@ program
   .description("List things")
   .option("-s, --short", "Show short summary of each things as output (instead of full JSON response)")
   .action(function(query, opts) {
-    rest.get(base + "?query=" + encodeURIComponent(query), tools.getAuthObj())
+      rest.get(tools.urlThings() + "?query=" + encodeURIComponent(query), tools.getAuthObj())
       .on('success', function(data, response) {
         if (opts.short) {
           console.log("Thing Id, Thing Token, Thing Name, Product Name");
@@ -168,3 +166,7 @@ program
   });
 
 program.parse(process.argv);
+// commander bug for command options, -s from list cant be used if below lines are uncommented
+//if (!program.args.length) {
+//  program.help();
+//}

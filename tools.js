@@ -38,6 +38,12 @@ module.exports = {
     urlUserByName: function(name) {
         return config.baseApiUrl + "/users/?username=" + encodeURIComponent(name);
     },
+    urlThings: function() {
+        return config.baseApiUrl + "/things/";
+    },
+    urlThing: function(thingId) {
+        return config.baseApiUrl + "/things/" + thingId;
+    },
     urlThingByName: function(name) {
         return config.baseApiUrl + "/things/?thingName=" + encodeURIComponent(name);
     },
