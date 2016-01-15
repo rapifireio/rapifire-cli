@@ -24,7 +24,7 @@ program
   });
 
 function doPublish(name, dataToPublish, channel) {
-    rest.get(tools.urlThingByName(name), tools.getAuthObj())
+  rest.get(tools.urlThingByName(name), tools.getAuthObj())
     .on('complete', function(data, response) {
       var thing = null;
       for (var i = 0; i < data.length; i++) {
@@ -51,7 +51,7 @@ function doPublish(name, dataToPublish, channel) {
       }
 
       var publish = function(authId, authKey) {
-          rest.postJson(tools.urlChannels(thing.thingId, channel), toPublish, {
+        rest.postJson(tools.urlChannels(thing.thingId, channel), toPublish, {
             username: authId,
             password: authKey
           })

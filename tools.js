@@ -5,51 +5,51 @@ var rest = require('restler');
 var config = require('./config');
 
 module.exports = {
-    urlLogin: function() {
-        return config.baseWebUrl + '/myself';
-    },
-    urlRegister: function() {
-        return config.baseWebUrl + '/developers';
-    },
-    urlActivate: function(token) {
-        return config.baseWebUrl + '/developers?token=' + token;
-    },
-    urlCloudCode: function(productId) {
-        return config.baseApiUrl + "/code/" + productId;
-    },
-    urlMyself: function() {
-        return config.baseApiUrl + "/myself";
-    },
-    urlProducts: function() {
-        return config.baseApiUrl + "/products/";
-    },
-    urlProduct: function(productId) {
-        return config.baseApiUrl + "/products/" + productId;
-    },
-    urlProductMeta: function(productId) {
-        return config.baseApiUrl + "/products/" + productId + "/meta";
-    },
-    urlProductMetaKey: function(productId, key) {
-        return config.baseApiUrl + "/products/" + productId + "/meta/" + encodeURIComponent(key);
-    },
-    urlProductByName: function(name) {
-        return config.baseApiUrl + "/products/?name=" + encodeURIComponent(name);
-    },
-    urlUserByName: function(name) {
-        return config.baseApiUrl + "/users/?username=" + encodeURIComponent(name);
-    },
-    urlThings: function() {
-        return config.baseApiUrl + "/things/";
-    },
-    urlThing: function(thingId) {
-        return config.baseApiUrl + "/things/" + thingId;
-    },
-    urlThingByName: function(name) {
-        return config.baseApiUrl + "/things/?thingName=" + encodeURIComponent(name);
-    },
-    urlChannels: function(thingId, channel) {
-        return config.baseApiUrl + "/channels/" + "/" + thingId + "/" + channel;
-    },
+  urlLogin: function() {
+    return config.baseWebUrl + '/myself';
+  },
+  urlRegister: function() {
+    return config.baseWebUrl + '/developers';
+  },
+  urlActivate: function(token) {
+    return config.baseWebUrl + '/developers?token=' + token;
+  },
+  urlCloudCode: function(productId) {
+    return config.baseApiUrl + "/code/" + productId;
+  },
+  urlMyself: function() {
+    return config.baseApiUrl + "/myself";
+  },
+  urlProducts: function() {
+    return config.baseApiUrl + "/products/";
+  },
+  urlProduct: function(productId) {
+    return config.baseApiUrl + "/products/" + productId;
+  },
+  urlProductMeta: function(productId) {
+    return config.baseApiUrl + "/products/" + productId + "/meta";
+  },
+  urlProductMetaKey: function(productId, key) {
+    return config.baseApiUrl + "/products/" + productId + "/meta/" + encodeURIComponent(key);
+  },
+  urlProductByName: function(name) {
+    return config.baseApiUrl + "/products/?name=" + encodeURIComponent(name);
+  },
+  urlUserByName: function(name) {
+    return config.baseApiUrl + "/users/?username=" + encodeURIComponent(name);
+  },
+  urlThings: function() {
+    return config.baseApiUrl + "/things/";
+  },
+  urlThing: function(thingId) {
+    return config.baseApiUrl + "/things/" + thingId;
+  },
+  urlThingByName: function(name) {
+    return config.baseApiUrl + "/things/?thingName=" + encodeURIComponent(name);
+  },
+  urlChannels: function(thingId, channel) {
+    return config.baseApiUrl + "/channels/" + "/" + thingId + "/" + channel;
+  },
   getProfileFilename: function() {
     return (process.env.HOME || process.env.USERPROFILE) + path.sep + ".rapifire-cli";
   },
@@ -91,8 +91,8 @@ module.exports = {
     var packet = {
       "operation": "subscribe",
       "data": {
-          "channel": channel,
-          "interactive": true
+        "channel": channel,
+        "interactive": true
       }
     };
 
@@ -146,12 +146,12 @@ module.exports = {
       })
       .on('fail', this.failureHandler);
   },
-    doForMyself: function(callback) {
-        rest.get(this.urlMyself(), this.getAuthObj())
-            .on('success', function(data, response) {
-                callback(data.authId, data.authKey, data.providerCompanyId);
-            })
-            .on('fail', this.failureHandler);
-    },
+  doForMyself: function(callback) {
+    rest.get(this.urlMyself(), this.getAuthObj())
+      .on('success', function(data, response) {
+        callback(data.authId, data.authKey, data.providerCompanyId);
+      })
+      .on('fail', this.failureHandler);
+  },
 
 }

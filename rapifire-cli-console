@@ -11,5 +11,5 @@ var config = require('./config');
 console.log("Running developer console...");
 
 tools.doForMyself(function(authId, authKey, providerCompanyId) {
-    tools.subscribe(authId, authKey, "/provider/" + providerCompanyId + "/all-things", config.baseWsUrl);
+  tools.subscribe(authId, authKey, "/provider/" + providerCompanyId + "/all-things", config.baseWsUrl);
 });

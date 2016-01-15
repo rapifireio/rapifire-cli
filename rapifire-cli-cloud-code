@@ -12,7 +12,7 @@ program
   .description("Get current Cloud Code snippet for given product")
   .action(function(productName, opts) {
     tools.doForProductName(productName, function(productId) {
-        rest.get(tools.urlCloudCode(productId), tools.getAuthObj())
+      rest.get(tools.urlCloudCode(productId), tools.getAuthObj())
         .on('success', function(data, response) {
           console.log(data);
         })
@@ -45,7 +45,7 @@ program
 
       tools.doForProductName(productName, function(productId) {
         console.log("Uploading code snippet for " + productName);
-          rest.postJson(tools.urlCloudCode(productId), {
+        rest.postJson(tools.urlCloudCode(productId), {
             code: code,
             codeType: codeType
           }, tools.getAuthObj())

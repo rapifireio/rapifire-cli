@@ -13,7 +13,7 @@ program
   .description("Subscribe as a Thing to it's command channel")
   .action(function(name, opts) {
     console.log("Subscribing as " + name + " to it's command channel.");
-      rest.get(tools.urlThingByName(name), tools.getAuthObj())
+    rest.get(tools.urlThingByName(name), tools.getAuthObj())
       .on('complete', function(data, response) {
 
         var thing = null;

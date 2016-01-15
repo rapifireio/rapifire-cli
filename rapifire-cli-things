@@ -15,7 +15,7 @@ program
     console.log("Creating new thing named " + name + " for product " + product);
 
     tools.doForProductName(product, function(productId) {
-        rest.postJson(tools.urlThings(), {
+      rest.postJson(tools.urlThings(), {
           productId: productId,
           name: name
         }, tools.getAuthObj())
@@ -40,7 +40,7 @@ program
         }
 
         var updateThing = function(json) {
-            rest.putJson(tools.urlThing(thingId), json, tools.getAuthObj())
+          rest.putJson(tools.urlThing(thingId), json, tools.getAuthObj())
             .on('success', function(data, response) {
               console.log("Thing updated.");
             })
@@ -65,7 +65,7 @@ program
   .action(function(thingName, username, opts) {
     tools.doForThingName(thingName, function(thingId) {
       tools.doForUserName(username, function(userId) {
-          rest.postJson(tools.urlThing(thingId) + '/assign/' + userId, {}, tools.getAuthObj())
+        rest.postJson(tools.urlThing(thingId) + '/assign/' + userId, {}, tools.getAuthObj())
           .on('success', function(data, response) {
             console.log("Thing successfully assigned.")
           })
@@ -79,7 +79,7 @@ program
   .description("Delete single thing entry")
   .action(function(thingName, opts) {
     tools.doForThingName(thingName, function(thingId) {
-        rest.del(tools.urlThib(thingId), tools.getAuthObj())
+      rest.del(tools.urlThib(thingId), tools.getAuthObj())
         .on('success', function(data, response) {
           console.log("Thing " + thingName + " deleted.");
         })
@@ -92,7 +92,7 @@ program
   .description("Show thing")
   .action(function(thingName, opts) {
     tools.doForThingName(thingName, function(thingId) {
-        rest.get(tools.urlThing(thingId), tools.getAuthObj())
+      rest.get(tools.urlThing(thingId), tools.getAuthObj())
         .on('success', function(data, response) {
           tools.printJson(data);
         })
@@ -106,7 +106,7 @@ program
   .action(function(thingName, opts) {
 
     tools.doForThingName(thingName, function(thingId) {
-        rest.get(tools.urlThing(thingId) + '/meta', tools.getAuthObj())
+      rest.get(tools.urlThing(thingId) + '/meta', tools.getAuthObj())
         .on('success', function(data, response) {
           tools.printJsonArray(data);
         }).on('fail', tools.failureHandler);
@@ -149,9 +149,9 @@ program
   .command("list <query>")
   .description("List things, JSON format")
   .action(function(query, opts) {
-      rest.get(tools.urlThings() + "?query=" + encodeURIComponent(query), tools.getAuthObj())
+    rest.get(tools.urlThings() + "?query=" + encodeURIComponent(query), tools.getAuthObj())
       .on('success', function(data, response) {
-          tools.printJson(data);
+        tools.printJson(data);
         console.log("Total count: " + response.headers['x-total-count']);
       })
       .on('fail', tools.failureHandler);
@@ -161,12 +161,12 @@ program
   .command("list-short <query>")
   .description("List things, short format")
   .action(function(query, opts) {
-      rest.get(tools.urlThings() + "?query=" + encodeURIComponent(query), tools.getAuthObj())
+    rest.get(tools.urlThings() + "?query=" + encodeURIComponent(query), tools.getAuthObj())
       .on('success', function(data, response) {
-          console.log("Thing Id, Thing Token, Thing Name, Product Name");
-          for (var i = 0; i < data.length; i++) {
-            console.log(data[i].thingId + ", " + data[i].thingToken + ", " + data[i].name + ", " + data[i].product.name);
-          }
+        console.log("Thing Id, Thing Token, Thing Name, Product Name");
+        for (var i = 0; i < data.length; i++) {
+          console.log(data[i].thingId + ", " + data[i].thingToken + ", " + data[i].name + ", " + data[i].product.name);
+        }
         console.log("Total count: " + response.headers['x-total-count']);
       })
       .on('fail', tools.failureHandler);
