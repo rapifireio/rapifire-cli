@@ -18,14 +18,16 @@ $ rapifire-cli
 
   Commands:
 
-    signin <email> <password>    Sign in to your existing RAPIFIRE Developer Account
+    login <email> <password>     Log into to your existing RAPIFIRE Developer Account
     register <email> <password>  Initialize RAPIFIRE Developer Account
     activate <activationCode>    Activate your RAPIFIRE Developer Account
     products                     Products management commands
     things                       Things management commands
     users                        Users management commands
-    code                         Cloud Code management
+    cloud-code                   Cloud Code management
     console                      Things real-time data console
+    publish                      Publish data to the cloud
+    subscribe                    Subscribe to command channels
     help [cmd]                   display help for [cmd]
 
   Options:
