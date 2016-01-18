@@ -173,14 +173,14 @@ program
   });
 
 program
-  .command("clone <thingName> <productName>")
+  .command("clone <publicThingName> <productName> [thingName]")
   .description("Clone thing")
-  .action(function(thingName, productName){
-    tools.doForThingName(thingName, function(thingId){
+  .action(function(publicThingName, productName, thingName){
+    tools.doForThingName(publicThingName, function(thingId){
       tools.doForProductName(productName, function(productId) {
         var thing = {
           productId: productId,
-          name : thingName
+          name : thingName ? thingName : 'Clone of ' + publicThingName 
         }
         rest.putJson(tools.urlThing(thingId) + '/clone', thing, tools.getAuthObj())
           .on('success', function(data, response){
