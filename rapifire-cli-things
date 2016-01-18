@@ -182,9 +182,9 @@ program
           productId: productId,
           name : thingName ? thingName : 'Clone of ' + publicThingName 
         }
-        rest.putJson(tools.urlThing(thingId) + '/clone', thing, tools.getAuthObj())
+        rest.postJson(tools.urlThing(thingId) + '/clone', thing, tools.getAuthObj())
           .on('success', function(data, response){
-            console.log('Clone success');
+            console.log('Clone success.');
             tools.printJson(data);
           })
           .on('fail', tools.failureHandler);

@@ -48,7 +48,7 @@ module.exports = {
     return config.baseApiUrl + "/things/?thingName=" + encodeURIComponent(name);
   },
   urlChannels: function(thingId, channel) {
-    return config.baseApiUrl + "/channels/" + "/" + thingId + "/" + channel;
+    return config.basePublishUrl + "/channels/" + "/" + thingId + "/" + channel;
   },
   getProfileFilename: function() {
     return (process.env.HOME || process.env.USERPROFILE) + path.sep + ".rapifire-cli";
