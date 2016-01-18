@@ -172,6 +172,27 @@ program
       .on('fail', tools.failureHandler);
   });
 
+program
+  .command("clone <thingName> <productName>")
+  .description("Clone thing")
+  .action(function(thingName, productName){
+    tools.doForThingName(thingName, function(thingId){
+      tools.doForProductName(productName, function(productId) {
+        var thing = {
+          productId: productId,
+          name : thingName
+        }
+        rest.putJson(tools.urlThing(thingId) + '/clone', thing, tools.getAuthObj())
+          .on('success', function(data, response){
+            console.log('Clone success');
+            tools.printJson(data);
+          })
+          .on('fail', tools.failureHandler);
+      });
+    });
+  })
+
+
 program.parse(process.argv);
 if (!program.args.length) {
   program.help();
