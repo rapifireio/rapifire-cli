@@ -236,9 +236,9 @@ function changeDataPublicForThing(thingName, isDataPublic) {
           rest.putJson(tools.urlThing(thingId), json, tools.getAuthObj())
             .on('success', function(data, response) {
               if (isDataPublic) {
-                console.log("Thing data are now public.");
+                console.log("Thing data is now public.");
               } else {
-                console.log("Thing data are now private.");
+                console.log("Thing data is now private.");
               }
             })
             .on('fail', tools.failureHandler);
