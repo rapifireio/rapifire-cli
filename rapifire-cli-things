@@ -27,16 +27,21 @@ program
     })
   });
 
-
 program
-  .command("update <name> <newName> <newProductName> [userName]")
+  .command("update <name> <newName> <newProductName> <isDataPublic> [userName]")
   .description("Update thing entry")
-  .action(function(name, newName, newProductName, userName, opts) {
+  .action(function(name, newName, newProductName, isDataPublic, userName, opts) {
+    if (!/^(true|false)$/.test(isDataPublic)) {
+      console.log("Invalid 'isDataPublic' argument. Should be 'true' or 'false'");
+      process.exit(1);
+    }
+
     tools.doForThingName(name, function(thingId) {
       tools.doForProductName(newProductName, function(productId) {
         var updateJson = {
           name: newName,
-          productId: productId
+          productId: productId,
+          publicData: isDataPublic
         }
 
         var updateThing = function(json) {
@@ -175,22 +180,76 @@ program
 program
   .command("clone <publicThingName> <productName> [thingName]")
   .description("Clone thing")
-  .action(function(publicThingName, productName, thingName){
-    tools.doForThingName(publicThingName, function(thingId){
+  .action(function(publicThingName, productName, thingName) {
+    tools.doForThingName(publicThingName, function(thingId) {
       tools.doForProductName(productName, function(productId) {
         var thing = {
           productId: productId,
-          name : thingName ? thingName : 'Clone of ' + publicThingName 
+          name: thingName ? thingName : 'Clone of ' + publicThingName
         }
         rest.postJson(tools.urlThing(thingId) + '/clone', thing, tools.getAuthObj())
-          .on('success', function(data, response){
+          .on('success', function(data, response) {
             console.log('Clone success.');
             tools.printJson(data);
           })
           .on('fail', tools.failureHandler);
       });
     });
-  })
+  });
+
+program
+  .command("make-public <thingName>")
+  .description("Makes thing data public")
+  .action(function(thingName) {
+    changeDataPublicForThing(thingName, true);
+  });
+
+program
+  .command("make-private <thingName>")
+  .description("Makes thing data private")
+  .action(function(thingName) {
+    changeDataPublicForThing(thingName, false);
+  });
+
+function changeDataPublicForThing(thingName, isDataPublic) {
+  tools.doForThingName(thingName, function(thingId) {
+    rest.get(tools.urlThing(thingId), tools.getAuthObj())
+      .on('success', function(data, response) {
+
+        if (data.publicData == isDataPublic) {
+          if (isDataPublic) {
+            console.log("Data already public for " + thingName + ".")
+          } else {
+            console.log("Data already private for " + thingName + ".")
+          }
+          process.exit(1);
+        }
+
+        var updateJson = {
+          name: data.name,
+          productId: data.product.id,
+          userId: data.userId,
+          publicData: isDataPublic
+        }
+
+        var updateThing = function(json) {
+          rest.putJson(tools.urlThing(thingId), json, tools.getAuthObj())
+            .on('success', function(data, response) {
+              if (isDataPublic) {
+                console.log("Thing data are now public.");
+              } else {
+                console.log("Thing data are now private.");
+              }
+            })
+            .on('fail', tools.failureHandler);
+        }
+
+        updateThing(updateJson);
+
+      })
+      .on('fail', tools.failureHandler);
+  });
+}
 
 
 program.parse(process.argv);
