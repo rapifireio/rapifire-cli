@@ -228,7 +228,6 @@ function changeDataPublicForThing(thingName, isDataPublic) {
         var updateJson = {
           name: data.name,
           productId: data.product.id,
-          userId: data.userId,
           publicData: isDataPublic
         }
 
