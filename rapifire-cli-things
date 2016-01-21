@@ -9,16 +9,23 @@ var tools = require('./tools');
 var config = require('./config');
 
 program
-  .command("create <name> <product>")
+  .command("create <name> <product> [isDataPublic]")
   .description("Create new thing")
-  .action(function(name, product, opts) {
-    console.log("Creating new thing named " + name + " for product " + product);
+  .action(function(name, product, isDataPublic, opts) {
+
+    if (isDataPublic != undefined && !/^(true|false)$/.test(isDataPublic)) {
+      console.log("Invalid 'isDataPublic' argument. Should be 'true' or 'false'.");
+      process.exit(1);
+    }
 
     tools.doForProductName(product, function(productId) {
-      rest.postJson(tools.urlThings(), {
-          productId: productId,
-          name: name
-        }, tools.getAuthObj())
+      var thingJson = {
+        productId: productId,
+        name: name,
+        publicData: /^(true)$/.test(isDataPublic)
+      }
+
+      rest.postJson(tools.urlThings(), thingJson, tools.getAuthObj())
         .on('success', function(data, response) {
           console.log("New thing created: ");
           tools.printJson(data);
