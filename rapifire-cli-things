@@ -231,6 +231,11 @@ function changeDataPublicForThing(thingName, isDataPublic) {
           publicData: isDataPublic
         }
 
+        // if thing is already assigned
+        if (data.userId > 0) {
+          updateJson.userId = data.userId;
+        }
+
         var updateThing = function(json) {
           rest.putJson(tools.urlThing(thingId), json, tools.getAuthObj())
             .on('success', function(data, response) {
