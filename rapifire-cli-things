@@ -264,7 +264,7 @@ function changeDataPublicForThing(thingName, isDataPublic) {
 
 program
   .command("list-public <query>")
-  .description("List private things, short format")
+  .description("List public things, short format")
   .action(function(query, opts) {
     rest.get(tools.urlThings() + "?query=" + encodeURIComponent(query) + "&publicData=true", tools.getAuthObj())
       .on('success', function(data, response) {
