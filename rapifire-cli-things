@@ -188,7 +188,7 @@ program
   .command("clone <publicThingName> <productName> [thingName]")
   .description("Clone thing")
   .action(function(publicThingName, productName, thingName) {
-    tools.doForThingName(publicThingName, function(thingId) {
+    tools.doForSharedThingName(publicThingName, function(thingId) {
       tools.doForProductName(productName, function(productId) {
         var thing = {
           productId: productId,

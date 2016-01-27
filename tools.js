@@ -47,6 +47,9 @@ module.exports = {
   urlThingByName: function(name) {
     return config.baseApiUrl + "/things/?thingName=" + encodeURIComponent(name);
   },
+  urlSharedThingByName: function(name) {
+    return config.baseApiUrl + "/things/?sharedThingName=" + encodeURIComponent(name);
+  },
   urlChannels: function(thingId, channel) {
     return config.basePublishUrl + "/channels/" + "/" + thingId + "/" + channel;
   },
@@ -136,6 +139,18 @@ module.exports = {
   },
   doForThingName: function(thingName, callback) {
     rest.get(this.urlThingByName(thingName), this.getAuthObj())
+      .on('success', function(data, response) {
+        if (data.length != 1) {
+          console.log("Found " + data.length + " things. Expected single thing.");
+          process.exit(1);
+        }
+        var thingId = data[0].thingId;
+        callback(thingId);
+      })
+      .on('fail', this.failureHandler);
+  },
+  doForSharedThingName : function(thingName, callback){
+    rest.get(this.urlSharedThingByName(thingName), this.getAuthObj())
       .on('success', function(data, response) {
         if (data.length != 1) {
           console.log("Found " + data.length + " things. Expected single thing.");
