@@ -11,6 +11,7 @@ var config = require('./config');
 program
   .command("create <name> <product> [isDataPublic]")
   .description("Create new thing")
+  .option('-d, --description [description]')
   .action(function(name, product, isDataPublic, opts) {
 
     if (isDataPublic != undefined && !/^(true|false)$/.test(isDataPublic)) {
@@ -23,6 +24,10 @@ program
         productId: productId,
         name: name,
         publicData: /^(true)$/.test(isDataPublic)
+      }
+
+      if(opts.description) {
+        thingJson.description = opts.description;
       }
 
       rest.postJson(tools.urlThings(), thingJson, tools.getAuthObj())
