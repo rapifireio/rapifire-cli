@@ -42,6 +42,7 @@ program
 program
   .command("update <name> <newName> <newProductName> <isDataPublic> [userName]")
   .description("Update thing entry")
+  .option('-d, --description [description]')
   .action(function(name, newName, newProductName, isDataPublic, userName, opts) {
     if (!/^(true|false)$/.test(isDataPublic)) {
       console.log("Invalid 'isDataPublic' argument. Should be 'true' or 'false'");
@@ -54,6 +55,10 @@ program
           name: newName,
           productId: productId,
           publicData: isDataPublic
+        }
+
+        if(opts.description) {
+          updateJson.description = opts.description;
         }
 
         var updateThing = function(json) {
