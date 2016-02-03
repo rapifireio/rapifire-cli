@@ -164,7 +164,7 @@ module.exports = {
   doForMyself: function(callback) {
     rest.get(this.urlMyself(), this.getAuthObj())
       .on('success', function(data, response) {
-        callback(data.authId, data.authKey, data.providerCompanyId);
+        callback(data.authId, data.authKey, data.developerId);
       })
       .on('fail', this.failureHandler);
   },
