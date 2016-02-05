@@ -149,7 +149,7 @@ module.exports = {
       })
       .on('fail', this.failureHandler);
   },
-  doForSharedThingName : function(thingName, callback){
+  doForSharedThingName: function(thingName, callback) {
     rest.get(this.urlSharedThingByName(thingName), this.getAuthObj())
       .on('success', function(data, response) {
         if (data.length != 1) {

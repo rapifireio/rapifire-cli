@@ -26,7 +26,7 @@ program
         publicData: /^(true)$/.test(isDataPublic)
       }
 
-      if(opts.description) {
+      if (opts.description) {
         thingJson.description = opts.description;
       }
 
@@ -57,7 +57,7 @@ program
           publicData: isDataPublic
         }
 
-        if(opts.description) {
+        if (opts.description) {
           updateJson.description = opts.description;
         }
 
