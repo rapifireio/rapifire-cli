@@ -32,7 +32,41 @@ describe('rapifire-cli', function() {
 						});
 				});
 			});
+		});
 
+		it('update', function(done) {
+			this.timeout(TIMEOUT * 2);
+
+			exec('./rapifire-cli users update ' + testUsername + ' MochaTestUserNameUpdated DescriptionUpdated ', function(error, stdout, stderr) {
+				stdout.should.containEql('User MochaTestUserNameUpdated updated.');
+				exec('./rapifire-cli users show ' + testUsername, function(error, stdout, stderr){
+					stdout.should.containEql('\"description\": \"DescriptionUpdated\"');
+					done();
+				});
+			});
+		});
+
+
+		it('meta', function(done) {
+			this.timeout(TIMEOUT * 5);
+
+			exec('./rapifire-cli users meta-show ' + testUsername + ' mochaTestKey', function(error, stdout, stderr){
+				stdout.should.containEql('REST call failed');
+				exec('./rapifire-cli users meta-add ' + testUsername + ' mochaTestKey mochaTestValue', function(error, stdout, stderr){
+					stdout.should.containEql('Metadata added.');
+					exec('./rapifire-cli users meta-show ' + testUsername + ' mochaTestKey', function(error, stdout, stderr){
+						stdout.should.containEql('\"key\": \"mochaTestKey\"');
+						stdout.should.containEql('\"value\": \"mochaTestValue\"');
+						exec('./rapifire-cli users meta-delete ' + testUsername + ' mochaTestKey', function(error,stdout,stderr){
+							stdout.should.containEql('Metadata deleted.');
+							exec('./rapifire-cli users meta-show ' + testUsername + ' mochaTestKey', function(error, stdout, stderr){
+								stdout.should.containEql('REST call failed');
+								done();
+							});
+						});
+					});
+				});
+			});
 		});
 
 
@@ -46,7 +80,6 @@ describe('rapifire-cli', function() {
 					done();
 				});
 			});
-
 		});
 
 	});
