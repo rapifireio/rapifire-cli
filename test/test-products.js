@@ -6,6 +6,7 @@ var config = require('./test-config.js');
 describe('rapifire-cli', function() {
 
 	var testProductName = "MochaTestProduct" + Date.now();
+	var testThingName = "MochaTestThing" + Date.now();
 
 	describe('products', function(){
 
@@ -21,6 +22,21 @@ describe('rapifire-cli', function() {
 				});
 			});
 
+		});
+
+		it('delete with things', function(done){
+			this.timeout(config.TIMEOUT * 3);
+			exec('./rapifire-cli things create ' + testThingName + ' ' + testProductName, function(error, stdout, stderr){
+				stdout.should.containEql('New thing created');
+				exec('./rapifire-cli products delete ' + testProductName, function(error, stdout, stderr){
+					stdout.should.containEql('Thing already exists');
+					exec('./rapifire-cli things delete ' + testThingName, function(error, stdout, stderr){
+						stdout.should.containEql('Thing ' + testThingName + ' deleted');
+						done();
+					});
+					
+				});
+			});
 		});
 
 		it('delete', function(done){
