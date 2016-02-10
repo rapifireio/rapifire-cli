@@ -1,5 +1,4 @@
-var assert = require('assert'),
-	exec = require('child_process').exec,
+var exec = require('child_process').exec,
 	should = require('should');
 // use authentication from local configuration
 var config = require('./test-config.js');
@@ -30,8 +29,6 @@ describe('rapifire-cli', function() {
 				done();
 			});
 		});
-
-		it('', )
 
 	});
 
