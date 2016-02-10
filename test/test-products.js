@@ -24,6 +24,27 @@ describe('rapifire-cli', function() {
 
 		});
 
+		it('meta', function(done){
+			this.timeout(config.TIMEOUT * 6);
+			exec('./rapifire-cli products meta ' + testProductName, function(error, stdout, stderr) {
+				stdout.should.containEql('No meta.');
+				exec('./rapifire-cli products meta-add ' + testProductName + ' metaKey metaValue', function(error, stdout, stderr) {
+					stdout.should.containEql('Metadata added.');
+					exec('./rapifire-cli products meta ' + testProductName, function(error, stdout, stderr) {
+						stdout.should.containEql('\"key\": \"metaKey\"');
+						stdout.should.containEql('\"value\": \"metaValue\"');
+						exec('./rapifire-cli products meta-delete ' + testProductName + ' metaKey', function(error, stdout, stderr) {
+							stdout.should.containEql('Key metaKey deleted for product ' + testProductName);
+							exec('./rapifire-cli products meta ' + testProductName, function(error, stdout, stderr) {
+								stdout.should.containEql('No meta.');
+								done();
+							});
+						});
+					});
+				});
+			});
+		});
+
 		it('delete with things', function(done){
 			this.timeout(config.TIMEOUT * 3);
 			exec('./rapifire-cli things create ' + testThingName + ' ' + testProductName, function(error, stdout, stderr){
