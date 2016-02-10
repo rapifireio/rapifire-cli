@@ -2,9 +2,7 @@ var assert = require('assert'),
 	exec = require('child_process').exec,
 	should = require('should');
 // use authentication from local configuration
-var tools = require('../tools.js');
-
-var TIMEOUT = 10000;
+var config = require('./test-config.js');
 
 describe('rapifire-cli', function() {
 
@@ -13,14 +11,14 @@ describe('rapifire-cli', function() {
 	var testPassword = "mochaTestPassword";
 
 	before(function(){
-		auth = tools.getAuthObj();
+		auth = config.auth();
 		testUsername = "mochaTestUser" + Date.now();
 	});
 
 	describe('users', function() {
 
 		it('create', function(done){
-			this.timeout(TIMEOUT * 3);
+			this.timeout(config.TIMEOUT * 3);
 
 			exec('./rapifire-cli users list', function(error, stdout, stderr){
 				stdout.should.not.containEql(testUsername);
@@ -35,7 +33,7 @@ describe('rapifire-cli', function() {
 		});
 
 		it('update', function(done) {
-			this.timeout(TIMEOUT * 2);
+			this.timeout(config.TIMEOUT * 2);
 
 			exec('./rapifire-cli users update ' + testUsername + ' MochaTestUserNameUpdated DescriptionUpdated ', function(error, stdout, stderr) {
 				stdout.should.containEql('User MochaTestUserNameUpdated updated.');
@@ -48,7 +46,7 @@ describe('rapifire-cli', function() {
 
 
 		it('meta', function(done) {
-			this.timeout(TIMEOUT * 5);
+			this.timeout(config.TIMEOUT * 5);
 
 			exec('./rapifire-cli users meta-show ' + testUsername + ' mochaTestKey', function(error, stdout, stderr){
 				stdout.should.containEql('REST call failed');
@@ -71,7 +69,7 @@ describe('rapifire-cli', function() {
 
 
 		it('delete', function(done){
-			this.timeout(TIMEOUT * 2);
+			this.timeout(config.TIMEOUT * 2);
 
 			exec('./rapifire-cli users show ' + testUsername, function(error, stdout, stderr) {
 				stdout.should.containEql('\"username\": \"' + testUsername + '\"');
