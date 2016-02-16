@@ -7,6 +7,7 @@ describe('rapifire-cli', function() {
 
 	var testProductName = "MochaTestProduct" + Date.now();
 	var testThingName = "MochaTestThing" + Date.now();
+	var testCommandName = "MochaTestCommand" + Date.now();
 
 	describe('products', function(){
 
@@ -42,6 +43,28 @@ describe('rapifire-cli', function() {
 						});
 					});
 				});
+			});
+		});
+
+		it('command create', function(done){
+			this.timeout(config.TIMEOUT * 2);
+			exec('./rapifire-cli products commands-add ' + testProductName + ' ' + testCommandName + ' text all mochaPayload', function(error, stdout, stderr){
+				stdout.should.containEql('New command created.');
+				exec('./rapifire-cli products commands-show ' + testProductName + ' ' + testCommandName, function(error, stdout, stderr){
+					stdout.should.containEql('\"name\": \"' + testCommandName + '\"');
+					stdout.should.containEql('\"type\": \"text\"');
+					stdout.should.containEql('\"visibility\": \"all\"');
+					stdout.should.containEql('\"payload\": \"mochaPayload\"');
+					done();
+				});
+			});
+		});
+
+		it('command delete', function(done){
+			this.timeout(config.TIMEOUT);
+			exec('./rapifire-cli products commands-delete ' + testProductName + ' ' + testCommandName, function(error, stdout, stderr){
+				stdout.should.containEql('Command ' + testCommandName + ' deleted.');
+				done();
 			});
 		});
 
