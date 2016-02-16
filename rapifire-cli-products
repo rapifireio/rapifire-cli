@@ -187,11 +187,25 @@ program
       };
       rest.putJson(tools.urlProductCommand(productId, commandName), commandUpdateJson, tools.getAuthObj())
         .on('success', function(data, response){
-          console.log("Command updated. " + data);
+          console.log("Command " + commandName + " updated.");
         }).on('fail', tools.failureHandler);
     });
 
   });
+
+program
+  .command("commands-delete <productName> <commandName> ")
+  .description("Delete single command for product.")
+  .action(function(productName, commandName){
+
+    tools.doForProductName(productName, function(productId){
+      rest.del(tools.urlProductCommand(productId, commandName), tools.getAuthObj())
+        .on('success', function(data, response){
+          console.log("Command " + commandName + " deleted.");
+        }).on('fail', tools.failureHandler);
+    });
+
+  });  
 
 program.parse(process.argv);
 if (!program.args.length) {
