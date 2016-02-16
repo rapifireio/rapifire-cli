@@ -116,6 +116,60 @@ program
     });
   });
 
+program
+  .command("commands-list <productName>")
+  .description("List product commands")
+  .action(function(productName){
+    tools.doForProductName(productName, function(productId){
+      rest.get(tools.urlProductCommands(productId), tools.getAuthObj())
+        .on('success', function(data, response){
+          if(data && data.length){
+            tools.printJsonArray(data);
+          } else {
+            console.log("No commands for this product.");
+          }
+        }).on('fail', tools.failureHandler);
+    });
+  });
+
+program
+  .command("commands-add <productName> <commandName> <commandType> <commandVisibility> [commandPayload]")
+  .description("Create new command for product")
+  .action(function(productName, commandName, commandType, commandVisibility, commandPayload){
+
+    if (!/^(text|binary)$/.test(commandType)) {
+      console.log("Invalid 'commandType' argument. Should be 'text' or 'binary'.");
+      process.exit(1);
+    }
+
+    if (!/^(all|developer_only)$/.test(commandVisibility)) {
+      console.log("Invalid 'commandVisibility' argument. Should be 'all' or 'developer_only'.");
+      process.exit(1);
+    }
+
+    tools.doForProductName(productName, function(productId){
+      var commandJson = {
+        name: commandName,
+        type: commandType,
+        visibility: commandVisibility,
+        payload: commandPayload
+      };
+      rest.postJson(tools.urlProductCommands(productId), commandJson, tools.getAuthObj())
+        .on('success', function(data, response){
+          console.log("New command created.");
+        }).on('fail', tools.failureHandler);
+    });
+  }).on('--help', function() {
+    console.log('  Argument values information:');
+    console.log();
+    console.log('    productName: existing product name');
+    console.log('    commandName: new command name');
+    console.log('    commandType: \'text\' or \'binary\'');
+    console.log('    commandVisibility: \'all\' or \'developer_only\'');
+    console.log('    commandPayload: string (must be hex dump for binary type)');
+    console.log();
+  });
+
 program.parse(process.argv);
 if (!program.args.length) {
   program.help();
