@@ -275,14 +275,23 @@ function changeDataPublicForThing(thingName, isDataPublic) {
 program
   .command("list-public")
   .description("List public things, short format")
-  .action(function(query, opts) {
-    rest.get(tools.urlThings() + "?publicData=true", tools.getAuthObj())
+  .option('-p, --page [page]')
+  .option('-q, --query [query]')
+  .action(function(options) {
+    var page = (options && options.page) ? options.page : 0;
+    var query = (options && options.query) ? options.query : '';
+    rest.get(tools.urlSharedThings(page, query), tools.getAuthObj())
       .on('success', function(data, response) {
-        console.log("Thing Id, Thing Token, Thing Name, Product Name");
-        for (var i = 0; i < data.length; i++) {
-          console.log(data[i].thingId + ", " + data[i].thingToken + ", " + data[i].name + ", " + data[i].product.name);
-        }
-        console.log("Total count: " + response.headers['x-total-count']);
+        var sharedThings = data;
+        rest.get(tools.urlSharedThingsCount(query), tools.getAuthObj())
+          .on('success', function(data, response){
+            console.log("Thing Id, Thing Name, Description");
+            for (var i = 0; i < sharedThings.length; i++) {
+              console.log(sharedThings[i].thingId + ", " + sharedThings[i].name + ( (sharedThings[i].description) ? ", " + sharedThings[i].description : ""));
+            }
+            console.log("Total count: " + data.count);
+          })
+          .on('fail', tools.failureHandler);
       })
       .on('fail', tools.failureHandler);
   });

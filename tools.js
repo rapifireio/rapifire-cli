@@ -47,6 +47,12 @@ module.exports = {
   urlThingByName: function(name) {
     return config.baseApiUrl + "/things/?thingName=" + encodeURIComponent(name);
   },
+  urlSharedThings : function(page, searchToken){
+    return config.baseWebUrl + '/things/shared/device_name/true/' + page + '/' + searchToken;
+  },
+  urlSharedThingsCount : function(searchToken){
+    return config.baseWebUrl + '/things/shared/count/' + searchToken;
+  },
   urlSharedThingByName: function(name) {
     return config.baseApiUrl + "/things/?sharedThingName=" + encodeURIComponent(name);
   },
