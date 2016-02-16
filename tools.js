@@ -62,6 +62,9 @@ module.exports = {
   urlProductCommands : function(productId) {
     return config.baseApiUrl + "/products/" + productId + "/commands";
   },
+  urlProductCommand : function(productId, commandName) {
+    return config.baseApiUrl + "/products/" + productId + "/commands/" + commandName;
+  },
   getProfileFilename: function() {
     return (process.env.HOME || process.env.USERPROFILE) + path.sep + ".rapifire-cli";
   },

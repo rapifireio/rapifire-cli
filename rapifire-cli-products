@@ -170,6 +170,29 @@ program
     console.log();
   });
 
+program
+  .command("commands-update <productName> <commandName> <commandVisibility> <commandPayload>")
+  .description("Update command for single product.")
+  .action(function(productName, commandName, commandVisibility, commandPayload){
+
+    if (!/^(all|developer_only)$/.test(commandVisibility)) {
+      console.log("Invalid 'commandVisibility' argument. Should be 'all' or 'developer_only'.");
+      process.exit(1);
+    }
+
+    tools.doForProductName(productName, function(productId){
+      var commandUpdateJson = {
+        visibility: commandVisibility,
+        payload: commandPayload
+      };
+      rest.putJson(tools.urlProductCommand(productId, commandName), commandUpdateJson, tools.getAuthObj())
+        .on('success', function(data, response){
+          console.log("Command updated. " + data);
+        }).on('fail', tools.failureHandler);
+    });
+
+  });
+
 program.parse(process.argv);
 if (!program.args.length) {
   program.help();
