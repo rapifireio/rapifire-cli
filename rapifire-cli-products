@@ -133,6 +133,18 @@ program
   });
 
 program
+  .command("commands-show <productName> <commandName>")
+  .description("Show single command details")
+  .action(function(productName, commandName){
+    tools.doForProductName(productName, function(productId){
+      rest.get(tools.urlProductCommand(productId, commandName), tools.getAuthObj())
+        .on('success', function(data, response){
+          tools.printJson(data);
+        }).on('fail', tools.failureHandler);
+    });
+  });
+
+program
   .command("commands-add <productName> <commandName> <commandType> <commandVisibility> <commandPayload>")
   .description("Create new command for product")
   .action(function(productName, commandName, commandType, commandVisibility, commandPayload){
