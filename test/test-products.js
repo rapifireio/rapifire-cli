@@ -60,6 +60,21 @@ describe('rapifire-cli', function() {
 			});
 		});
 
+		it('command update', function(done){
+			this.timeout(config.TIMEOUT * 2);
+			exec('./rapifire-cli products commands-update ' + testProductName + ' ' + testCommandName + ' developer_only mochaPayloadUpdated', function(error, stdout, stderr){
+				stdout.should.containEql('Command ' + testCommandName + ' updated.');
+				exec('./rapifire-cli products commands-show ' + testProductName + ' ' + testCommandName, function(error, stdout, stderr){
+					stdout.should.containEql('\"name\": \"' + testCommandName + '\"');
+					stdout.should.containEql('\"type\": \"text\"');
+					stdout.should.containEql('\"visibility\": \"developer_only\"');
+					stdout.should.containEql('\"payload\": \"mochaPayloadUpdated\"');
+					done();
+				});
+			});
+
+		});
+
 		it('command delete', function(done){
 			this.timeout(config.TIMEOUT);
 			exec('./rapifire-cli products commands-delete ' + testProductName + ' ' + testCommandName, function(error, stdout, stderr){
