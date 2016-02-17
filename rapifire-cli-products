@@ -184,7 +184,7 @@ program
 
 program
   .command("commands-update <productName> <commandName> <commandVisibility> <commandPayload>")
-  .description("Update command for single product.")
+  .description("Update command for single product")
   .action(function(productName, commandName, commandVisibility, commandPayload){
 
     if (!/^(all|developer_only)$/.test(commandVisibility)) {
@@ -207,7 +207,7 @@ program
 
 program
   .command("commands-delete <productName> <commandName> ")
-  .description("Delete single command for product.")
+  .description("Delete single command for product")
   .action(function(productName, commandName){
 
     tools.doForProductName(productName, function(productId){
