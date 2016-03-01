@@ -1,7 +1,7 @@
 {
   "name": "rapifire-cli",
   "version": "0.2.6",
-  "description": "[RAPIFIRE](http://rapifire.com) Command Line Client",
+  "description": "RAPIFIRE Command Line Client",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
