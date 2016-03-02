@@ -9,21 +9,19 @@ var tools = require('./tools');
 var config = require('./config');
 
 program
-  .command("create <name> <product> [isDataPublic]")
+  .command("create <name> <product>")
   .description("Create new thing")
   .option('-d, --description [description]')
-  .action(function(name, product, isDataPublic, opts) {
-
-    if (isDataPublic != undefined && !/^(true|false)$/.test(isDataPublic)) {
-      console.log("Invalid 'isDataPublic' argument. Should be 'true' or 'false'.");
-      process.exit(1);
-    }
+  .option('-p, --public-data')
+  .option('-m, --public-data-and-metadata')
+  .action(function(name, product, opts) {
 
     tools.doForProductName(product, function(productId) {
       var thingJson = {
         productId: productId,
         name: name,
-        publicData: /^(true)$/.test(isDataPublic)
+        publicData: /^(true)$/.test(opts.publicData || opts.publicDataAndMetadata),
+        publicMetadata: /^(true)$/.test(opts.publicDataAndMetadata)
       }
 
       if (opts.description) {
@@ -40,21 +38,20 @@ program
   });
 
 program
-  .command("update <name> <newName> <newProductName> <isDataPublic> [userName]")
+  .command("update <name> <newName> <newProductName> [userName]")
   .description("Update thing entry")
   .option('-d, --description [description]')
-  .action(function(name, newName, newProductName, isDataPublic, userName, opts) {
-    if (!/^(true|false)$/.test(isDataPublic)) {
-      console.log("Invalid 'isDataPublic' argument. Should be 'true' or 'false'");
-      process.exit(1);
-    }
+  .option('-p, --public-data')
+  .option('-m, --public-data-and-metadata')
+  .action(function(name, newName, newProductName, userName, opts) {
 
     tools.doForThingName(name, function(thingId) {
       tools.doForProductName(newProductName, function(productId) {
         var updateJson = {
           name: newName,
           productId: productId,
-          publicData: isDataPublic
+          publicData: /^(true)$/.test(opts.publicData || opts.publicDataAndMetadata),
+          publicMetadata: /^(true)$/.test(opts.publicDataAndMetadata)
         }
 
         if (opts.description) {
@@ -218,34 +215,45 @@ program
   .command("make-public <thingName>")
   .description("Makes thing data public")
   .action(function(thingName) {
-    changeDataPublicForThing(thingName, true);
+    changeDataPublicForThing(thingName, true, false);
+  });
+
+program
+  .command("make-public-metadata <thingName>")
+  .description("Makes thing data and metadata public")
+  .action(function(thingName) {
+    changeDataPublicForThing(thingName, true, true);
   });
 
 program
   .command("make-private <thingName>")
   .description("Makes thing data private")
   .action(function(thingName) {
-    changeDataPublicForThing(thingName, false);
+    changeDataPublicForThing(thingName, false, false);
   });
 
-function changeDataPublicForThing(thingName, isDataPublic) {
+function changeDataPublicForThing(thingName, isDataPublic, isMetadataPublic) {
   tools.doForThingName(thingName, function(thingId) {
     rest.get(tools.urlThing(thingId), tools.getAuthObj())
       .on('success', function(data, response) {
 
-        if (data.publicData == isDataPublic) {
+        if (data.publicData == isDataPublic && !isMetadataPublic && !data.publicMetadata) {
           if (isDataPublic) {
-            console.log("Data already public for " + thingName + ".")
+            console.log("Data already public for " + thingName + ".");
           } else {
-            console.log("Data already private for " + thingName + ".")
+            console.log("Data already private for " + thingName + ".");
           }
+          process.exit(1);
+        } else if (isMetadataPublic && data.publicMetadata) {
+          console.log("Data and metadata already public for " + thingName + ".");
           process.exit(1);
         }
 
         var updateJson = {
           name: data.name,
           productId: data.product.id,
-          publicData: isDataPublic
+          publicData: isDataPublic,
+          publicMetadata: isMetadataPublic
         }
 
         // if thing is already assigned
@@ -256,7 +264,9 @@ function changeDataPublicForThing(thingName, isDataPublic) {
         var updateThing = function(json) {
           rest.putJson(tools.urlThing(thingId), json, tools.getAuthObj())
             .on('success', function(data, response) {
-              if (isDataPublic) {
+              if (isDataPublic && isMetadataPublic) {
+                console.log("Thing data and metadata are now public.");
+              } else if (isDataPublic) {
                 console.log("Thing data is now public.");
               } else {
                 console.log("Thing data is now private.");
