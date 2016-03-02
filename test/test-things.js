@@ -65,6 +65,45 @@ describe('rapifire-cli', function() {
 			});
 		});
 
+		it('update-to-public', function(done){
+			this.timeout(config.TIMEOUT);
+			exec('./rapifire-cli things update -p ' + testThingName + ' ' + testThingName + ' ' + testProductName, function(error, stdout, stderr){
+				stdout.should.containEql('Thing updated.');
+				exec('./rapifire-cli things show ' + testThingName, function(error, stdout, stderr){
+					stdout.should.containEql('\"name\": \"' + testThingName + '\"');
+					stdout.should.containEql('\"publicData\": true');
+					stdout.should.containEql('\"publicMetadata\": false');
+					done();
+				});
+			});
+		});
+
+		it('update-to-public-metadata', function(done){
+			this.timeout(config.TIMEOUT);
+			exec('./rapifire-cli things update -m ' + testThingName + ' ' + testThingName + ' ' + testProductName, function(error, stdout, stderr){
+				stdout.should.containEql('Thing updated.');
+				exec('./rapifire-cli things show ' + testThingName, function(error, stdout, stderr){
+					stdout.should.containEql('\"name\": \"' + testThingName + '\"');
+					stdout.should.containEql('\"publicData\": true');
+					stdout.should.containEql('\"publicMetadata\": true');
+					done();
+				});
+			});
+		});
+
+		it('update-to-private', function(done){
+			this.timeout(config.TIMEOUT);
+			exec('./rapifire-cli things update ' + testThingName + ' ' + testThingName + ' ' + testProductName, function(error, stdout, stderr){
+				stdout.should.containEql('Thing updated.');
+				exec('./rapifire-cli things show ' + testThingName, function(error, stdout, stderr){
+					stdout.should.containEql('\"name\": \"' + testThingName + '\"');
+					stdout.should.containEql('\"publicData\": false');
+					stdout.should.containEql('\"publicMetadata\": false');
+					done();
+				});
+			});
+		});
+
 		it('make-public', function(done){
 			this.timeout(config.TIMEOUT);
 			exec('./rapifire-cli things make-public ' + testThingName, function(error, stdout, stderr){
