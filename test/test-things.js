@@ -7,16 +7,21 @@ describe('rapifire-cli', function() {
 
 	var auth = config.auth();
 	var testThingName = "MochaTestThing" + Date.now();
+	var testSigfoxThingName = "MochaTestSigfoxT" + Date.now();
 	var testPublicThingName = "MochaPTestThing" + Date.now();
 	var testPublicMetadataThingName = "MochaMTestThing" + Date.now();
-	var testProductName = "MochaTestProduct" + Date.now()
+	var testProductName = "MochaTestProduct" + Date.now();
+	var testSigfoxProductName = "MochaTestSigfoxP" + Date.now();
 	var testThingCloneName = "MochaThingClone" + Date.now();
 
 	before(function(done){
 		this.timeout(config.TIMEOUT);
 		exec('./rapifire-cli products create ' + testProductName, function(error, stdout, stderr){
 			stdout.should.containEql('New product created');
-			done();
+			exec('./rapifire-cli products create ' + testSigfoxProductName + ' -s', function(error, stdout, stderr){
+				stdout.should.containEql('New product created');
+				done();
+			});
 		});
 	});
 
@@ -162,6 +167,31 @@ describe('rapifire-cli', function() {
 			})
 		});
 
+		it('create-sigfox', function(done){
+			this.timeout(config.TIMEOUT);
+			exec('./rapifire-cli things show ' + testSigfoxThingName, function(error, stdout, stderr){
+				stdout.should.containEql('Thing not found.');
+				exec('./rapifire-cli things create -s ABC123 ' + testSigfoxThingName + ' ' + testSigfoxProductName, function(error, stdout, stderr){
+					stdout.should.containEql('New thing created');
+					stdout.should.containEql('\"name\": \"' + testSigfoxThingName + '\"');
+					stdout.should.containEql('\"sigfoxDeviceId\": \"ABC123\"');
+					done();
+				});
+			});
+		});
+
+		it('update-sigfox', function(done){
+			this.timeout(config.TIMEOUT);
+			exec('./rapifire-cli things update -s DEF456 ' + testSigfoxThingName + ' ' + testSigfoxThingName + ' ' + testSigfoxProductName, function(error, stdout, stderr){
+				stdout.should.containEql('Thing updated.');
+				exec('./rapifire-cli things show ' + testSigfoxThingName, function(error, stdout, stderr){
+					stdout.should.containEql('\"name\": \"' + testSigfoxThingName + '\"');
+					stdout.should.containEql('\"sigfoxDeviceId\": \"DEF456\"');
+					done();
+				});
+			});
+		});
+
 		it('delete', function(done){
 			this.timeout(config.TIMEOUT);
 			exec('./rapifire-cli things delete ' + testThingName, function(error, stdout, stderr) {
@@ -177,13 +207,19 @@ describe('rapifire-cli', function() {
 		exec('./rapifire-cli things delete ' + testPublicThingName, function(error, stdout, stderr) {
 			stdout.should.containEql('Thing ' + testPublicThingName + ' deleted');
 			exec('./rapifire-cli things delete ' + testPublicMetadataThingName, function(error, stdout, stderr) {
-				stdout.should.containEql('Thing ' + testPublicMetadataThingName + ' deleted')
+				stdout.should.containEql('Thing ' + testPublicMetadataThingName + ' deleted');
 				exec('./rapifire-cli things delete ' + testThingCloneName, function(error, stdout, stderr) {
-					stdout.should.containEql('Thing ' + testThingCloneName + ' deleted')
-					exec('./rapifire-cli products delete ' + testProductName, function(error, stdout, stderr){
-						stdout.should.containEql('Product ' + testProductName + ' deleted')
+					stdout.should.containEql('Thing ' + testThingCloneName + ' deleted');
+					exec('./rapifire-cli things delete ' + testSigfoxThingName, function(error, stdout, stderr) {
+						stdout.should.containEql('Thing ' + testSigfoxThingName + ' deleted');
+						exec('./rapifire-cli products delete ' + testProductName, function(error, stdout, stderr){
+							stdout.should.containEql('Product ' + testProductName + ' deleted');
+							exec('./rapifire-cli products delete ' + testSigfoxProductName, function(error, stdout, stderr){
+								stdout.should.containEql('Product ' + testSigfoxProductName + ' deleted');
+								done();
+							});
+						});
 					});
-					done();
 				});
 			});
 		});
