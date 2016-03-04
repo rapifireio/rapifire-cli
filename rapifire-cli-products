@@ -25,13 +25,16 @@ program
 
 program
   .command("create <name> [heartbeat]")
+  .usage("<name> [heartbeat] [options]")
   .description("Create new product")
+  .option('-s, --sigfox-product')
   .action(function(name, heartbeat, opts) {
     var heartbeat = heartbeat ? heartbeat : DEFAULT_HEARTBEAT;
 
     rest.postJson(tools.urlProducts(), {
         name: name,
-        heartbeat: heartbeat
+        heartbeat: heartbeat,
+        useSigfox: opts.sigfoxProduct
       }, tools.getAuthObj())
       .on('success', function(data, response) {
         console.log("New product created:");

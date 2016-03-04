@@ -6,6 +6,7 @@ var config = require('./test-config.js');
 describe('rapifire-cli', function() {
 
 	var testProductName = "MochaTestProduct" + Date.now();
+	var testSigfoxProductName = "MochaTestSigfoxP" + Date.now();
 	var testThingName = "MochaTestThing" + Date.now();
 	var testCommandName = "MochaTestCommand" + Date.now();
 
@@ -19,10 +20,25 @@ describe('rapifire-cli', function() {
 					stdout.should.containEql('New product created');
 					stdout.should.containEql('\"name\": \"' + testProductName + '\"');
 					stdout.should.containEql('\"heartbeat\": 123456789');
+					stdout.should.not.containEql('\"sigfoxProductId\"');
 					done();
 				});
 			});
 
+		});
+
+		it('create-sigfox', function(done) {
+			this.timeout(config.TIMEOUT * 2);
+			exec('./rapifire-cli products list', function(error, stdout, stderr) {
+				stdout.should.not.containEql('\"name\": \"' + testSigfoxProductName + '\"');
+				exec('./rapifire-cli products create -s ' + testSigfoxProductName + ' 123456789', function(error, stdout, stderr){
+					stdout.should.containEql('New product created');
+					stdout.should.containEql('\"name\": \"' + testSigfoxProductName + '\"');
+					stdout.should.containEql('\"heartbeat\": 123456789');
+					stdout.should.containEql('\"sigfoxProductId\"');
+					done();
+				});
+			});
 		});
 
 		it('meta', function(done){
@@ -93,7 +109,6 @@ describe('rapifire-cli', function() {
 						stdout.should.containEql('Thing ' + testThingName + ' deleted');
 						done();
 					});
-					
 				});
 			});
 		});
@@ -101,7 +116,10 @@ describe('rapifire-cli', function() {
 		it('delete', function(done){
 			exec('./rapifire-cli products delete ' + testProductName, function(error, stdout, stderr){
 				stdout.should.containEql('Product ' + testProductName + ' deleted.');
-				done();
+				exec('./rapifire-cli products delete ' + testSigfoxProductName, function(error, stdout, stderr){
+					stdout.should.containEql('Product ' + testSigfoxProductName + ' deleted.');
+					done();
+				});
 			});
 		});
 
