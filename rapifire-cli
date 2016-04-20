@@ -28,11 +28,13 @@ program
   });
 
 program
-  .command("register <email> <password>")
+  .command("register <firstname> <lastname> <email> <password>")
   .description("Initialize RAPIFIRE Developer Account")
-  .action(function(email, password, opts) {
+  .action(function(firstname, lastname, email, password, opts) {
     console.log("Registering", email);
     rest.postJson(tools.urlRegister(), {
+        firstname: firstname,
+        lastname: lastname,
         username: email,
         password: password
       })
